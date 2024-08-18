@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0"
+    />
+    <title>Capture DOM as Image</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.3.2/html2canvas.min.js"></script>
+  </head>
+  <body>
+    <div
+      id="contentToCapture"
+      style="padding: 20px"
+    >
+      <h1>Hello, World!</h1>
+      <p>This is some content that you want to capture as an image.</p>
+    </div>
+    <button id="captureButton">Capture as Image</button>
+
+    <script>
+      document
+        .getElementById('captureButton')
+        .addEventListener('click', function () {
+          html2canvas(document.getElementById('contentToCapture'), {
+            useCORS: true, // 如果需要加载跨域图片，设置为 true
+            backgroundColor: null, // 设置背景色为透明
+          }).then(function (canvas) {
+            // 将 Canvas 内容转换为图像数据 URL
+            const imgData = canvas.toDataURL('image/png');
+
+            // 创建一个链接并模拟点击下载图像
+            const a = document.createElement('a');
+            a.href = imgData;
+            a.download = 'captured-image.png';
+            a.click();
+          });
+        });
+    </script>
+  </body>
+</html>

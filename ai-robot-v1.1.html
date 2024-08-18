@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Simple Maze AI</title>
+  <style>
+    .maze {
+      display: grid;
+      gap: 0;
+      position: relative;
+      margin: 50px;
+    }
+
+    .cell {
+      width: 50px;
+      height: 50px;
+      border: 1px solid black;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-sizing: border-box;
+    }
+
+    .agent {
+      width: 25px;
+      height: 25px;
+      background-color: red;
+      border-radius: 50%;
+      transform: translate(50%, 50%);
+      position: absolute;
+      top: 0;
+      left: 0;
+    }
+
+    .obstacle {
+      background-color: black;
+    }
+  </style>
+</head>
+
+<body>
+  <label for="mazeSize">迷宫大小:</label>
+  <input type="number" id="mazeSize" value="10" min="2">
+  <button onclick="generateMaze()">生成迷宫</button>
+  <div class="maze" id="maze"></div>
+  <button onclick="startTraining()">开始训练</button>
+  <button onclick="saveModel()">保存模型</button>
+  <button onclick="loadModel()">加载模型</button>
+  <button onclick="visualizePath()">可视化路径</button>
+  <script>
+    let agentDom;
+    let mazeSize = 10;
+
+    class SimpleMazeEnv {
+      constructor () {
+        this.state = [0, 0]; // 初始状态
+        this.maze = Array.from({ length: mazeSize }, () => Array(mazeSize).fill(0)); // 动态生成迷宫
+        this.end = [mazeSize - 1, mazeSize - 1]; // 终点位置
+
+        // 设置障碍物
+        const obstacles = Math.floor(mazeSize * mazeSize * 0.2); // 20% 的格子是障碍物
+        for (let i = 0; i < obstacles; i++) {
+          const x = Math.floor(Math.random() * mazeSize);
+          const y = Math.floor(Math.random() * mazeSize);
+          this.maze[x][y] = 1;
+        }
+      }
+
+      reset () {
+        this.state = [0, 0]; // 重置状态
+        return this.state;
+      }
+
+      step (action) {
+        let [x, y] = this.state;
+        let newX = x;
+        let newY = y;
+
+        switch (action) {
+          case 0: // 上
+            newY = y - 1;
+            break;
+          case 1: // 下
+            newY = y + 1;
+            break;
+          case 2: // 左
+            newX = x - 1;
+            break;
+          case 3: // 右
+            newX = x + 1;
+            break;
+        }
+
+        if (newX < 0 || newX >= this.maze.length || newY < 0 || newY >= this.maze[0].length || this.maze[newX][newY] === 1) {
+          if (this.maze[newX]?.[newY] === 1) {
+            console.log('[dodo] ', `撞墙 [${newX}, ${newY}]`);
+          } else {
+            console.log('[dodo] ', `出界 [${newX}, ${newY}]`);
+          }
+          // 出界或撞墙，给予大惩罚
+          return [this.state, -1, false];
+        } else {
+          this.state = [newX, newY];
+          agentDom.style.top = `${newY * 50}px`;
+          agentDom.style.left = `${newX * 50}px`;
+
+          let done = newX === this.end[0] && newY === this.end[1];
+          let reward = done ? 1 : -0.01; // 到达终点奖励1，每走一步奖励-0.01
+
+          // 添加基于距离终点的距离的奖励因素
+          // let distanceToEnd = Math.abs(newX - this.end[0]) + Math.abs(newY - this.end[1]);
+          // reward += (mazeSize - distanceToEnd) * 0.1; // 距离越近，奖励越大
+
+          return [this.state, reward, done];
+        }
+      }
+    }
+
+    class QLearningAgent {
+      constructor () {
+        this.qTable = {}; // 使用对象来存储Q值
+        this.learningRate = 0.1;
+        this.discountFactor = 0.9;
+        this.explorationRate = 0.3;
+      }
+
+      getStateKey (state) {
+        return state.join(',');
+      }
+
+      getAction (state) {
+        let stateKey = this.getStateKey(state);
+        if (!this.qTable[stateKey]) {
+          this.qTable[stateKey] = Array(4).fill(0);
+        }
+
+        if (Math.random() < this.explorationRate) {
+          const action = Math.round(Math.random() * 4); // 随机选择动作
+          return action;
+        }
+        return this.qTable[stateKey].indexOf(Math.max(...this.qTable[stateKey])); // 选择Q值最大的动作
+      }
+
+      updateQTable (state, action, reward, nextState) {
+        let stateKey = this.getStateKey(state);
+        let nextStateKey = this.getStateKey(nextState);
+
+        if (!this.qTable[stateKey]) {
+          this.qTable[stateKey] = Array(4).fill(0);
+        }
+        if (!this.qTable[nextStateKey]) {
+          this.qTable[nextStateKey] = Array(4).fill(0);
+        }
+
+        let currentQ = this.qTable[stateKey][action];
+        let maxNextQ = Math.max(...this.qTable[nextStateKey]);
+        this.qTable[stateKey][action] =
+          currentQ +
+          this.learningRate *
+          (reward + this.discountFactor * maxNextQ - currentQ);
+      }
+
+      saveModel () {
+        localStorage.setItem('qTable-v1.1', JSON.stringify(this.qTable));
+      }
+
+      loadModel () {
+        const savedQTable = localStorage.getItem('qTable-v1.1');
+        if (savedQTable) {
+          this.qTable = JSON.parse(savedQTable);
+        }
+      }
+    }
+
+    let env = new SimpleMazeEnv();
+    let agent = new QLearningAgent();
+    let state;
+    let done;
+    let count;
+    let successCount = 0;
+
+    function generateMaze () {
+      mazeSize = parseInt(document.getElementById('mazeSize').value);
+      if (mazeSize < 2) {
+        alert('迷宫大小必须大于等于2');
+        return;
+      }
+
+      const mazeDiv = document.getElementById('maze');
+      mazeDiv.innerHTML = '';
+      mazeDiv.style.gridTemplateColumns = `repeat(${mazeSize}, 50px)`;
+      mazeDiv.style.gridTemplateRows = `repeat(${mazeSize}, 50px)`;
+
+      for (let i = 0; i < mazeSize * mazeSize; i++) {
+        const cell = document.createElement('div');
+        cell.className = 'cell';
+        mazeDiv.appendChild(cell);
+      }
+
+      // 随机放置障碍物
+
+      for (let i = 0; i < env.maze.length; i++) {
+        for (let j = 0; j < env.maze.length; j++) {
+          if (env.maze[j][i] === 1) {
+            const obstacle = document.createElement('div');
+            obstacle.className = 'cell obstacle';
+            mazeDiv.children[i * mazeSize + j].appendChild(obstacle);
+          }
+        }
+      }
+
+      agentDom = document.createElement('div');
+      agentDom.className = 'agent';
+      mazeDiv.appendChild(agentDom);
+    }
+
+    function startTraining () {
+      if (successCount >= 20) {
+        let successCount = 0;
+        console.table(agent.qTable);
+        return;
+      }
+
+      state = env.reset();
+      done = false;
+      count = 0;
+
+      const go = () => {
+        if (done || count > 1000) {
+          console.log('[dodo] ', 'action', done, count, successCount);
+          successCount++;
+          startTraining();
+          return;
+        }
+        count++;
+
+        setTimeout(() => {
+          let action = agent.getAction(state);
+          let [nextState, reward, _done] = env.step(action);
+          done = _done;
+          agent.updateQTable(state, action, reward, nextState);
+          state = nextState;
+          go();
+        }, 17); // 延迟0.1秒以便观察
+      };
+
+      go();
+    }
+
+    function saveModel () {
+      agent.saveModel();
+      alert('模型已保存');
+    }
+
+    function loadModel () {
+      agent.loadModel();
+      alert('模型已加载');
+    }
+
+    function visualizePath () {
+      let path = [];
+      let currentState = env.reset();
+      path.push(currentState);
+      done = false;
+
+      while (!done) {
+        let action = agent.getAction(currentState);
+        let [nextState, reward, _done] = env.step(action);
+        done = _done;
+        path.push(nextState);
+        currentState = nextState;
+      }
+
+      console.log('找到路径:', path);
+      alert('路径已打印到控制台');
+    }
+
+    generateMaze();
+  </script>
+</body>
+
+</html>

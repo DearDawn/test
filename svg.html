@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Transform Scale and SVG</title>
+  <style>
+    .parent {
+      width: 200px;
+      height: 200px;
+      border: 1px solid black;
+      margin: 20px;
+      animation: scaleA 0.5s 0.5s linear infinite;
+
+      /* 缩放父元素 */
+    }
+
+    @keyframes scaleA {
+      0% {
+        opacity: 0;
+        transform: scale(1.5);
+      }
+
+      100% {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+
+    .child {
+      height: 100%;
+      font-size: 50px;
+      font-weight: bold;
+      fill: #000;
+      display: flex;
+      align-items: center;
+    }
+
+    text {
+      dominant-baseline: middle;
+      alignment-baseline: middle;
+      text-anchor: middle;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="parent">
+    <svg class="child">
+      <text x='50%' y='50%'>dcddddd</text>
+      <text x='50%' y='50%'>dcddddd</text>
+      <text x='50%' y='50%'>dcddddd</text>
+      <text x='50%' y='50%'>dcddddd</text>
+      <text x='50%' y='50%'>dcddddd</text>
+      <circle cx="50" cy="50" r="40" fill="red" />
+    </svg>
+  </div>
+</body>
+
+</html>
