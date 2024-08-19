@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Balloon Inflator</title>
+  <style>
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background-color: #f0f0f0;
+      margin: 0;
+    }
+
+    #balloon {
+      width: 100px;
+      height: 150px;
+      background-color: red;
+      border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+      position: relative;
+      transition: width 0.5s, height 0.5s;
+    }
+
+    #balloon.exploded {
+      width: 0;
+      height: 0;
+      background-color: gray;
+      border-radius: 0;
+      animation: explode 0.5s forwards;
+    }
+
+    @keyframes explode {
+      0% {
+        width: 100px;
+        height: 150px;
+        background-color: red;
+      }
+
+      100% {
+        width: 0;
+        height: 0;
+        background-color: gray;
+        border-radius: 0;
+      }
+    }
+
+    button {
+      margin-top: 20px;
+      padding: 10px 20px;
+      font-size: 16px;
+    }
+  </style>
+</head>
+
+<body>
+  <div>
+    <div id="balloon"></div>
+    <button onclick="inflateBalloon()">Inflate Balloon</button>
+  </div>
+
+  <script>
+    let pressure = 0;
+    const maxPressure = 100;
+    const inflationRate = 10;
+    const deflationRate = 1;
+
+    function inflateBalloon () {
+    console.log('[dodo] ', 'pressure', pressure);
+      if (pressure < maxPressure) {
+        pressure += inflationRate * (1.1 - pressure / maxPressure);
+        updateBalloonSize();
+        if (pressure >= maxPressure) {
+          explodeBalloon();
+        } else {
+          setTimeout(deflateBalloon, 1000);
+        }
+      }
+    }
+
+    function deflateBalloon () {
+      if (pressure > 0) {
+        pressure -= deflationRate;
+        updateBalloonSize();
+      }
+    }
+
+    function updateBalloonSize () {
+      const balloon = document.getElementById('balloon');
+      const width = 100 + (pressure * 2);
+      const height = 150 + (pressure * 3);
+      balloon.style.width = `${width}px`;
+      balloon.style.height = `${height}px`;
+    }
+
+    function explodeBalloon () {
+      const balloon = document.getElementById('balloon');
+      balloon.classList.add('exploded');
+      setTimeout(() => {
+        alert('Balloon exploded!');
+        resetBalloon();
+      }, 500);
+    }
+
+    function resetBalloon () {
+      const balloon = document.getElementById('balloon');
+      balloon.classList.remove('exploded');
+      pressure = 0;
+      updateBalloonSize();
+    }
+  </script>
+</body>
+
+</html>
