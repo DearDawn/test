@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Draggable Div</title>
+    <style>
+        body,
+        html {
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+        }
+
+        #page {
+            position: absolute;
+            inset: 0;
+            cursor: pointer;
+            margin: auto;
+            /* overflow: hidden; */
+        }
+
+        #page,
+        .cell {
+            --w: 300px;
+            --h: 500px;
+            --offset-x: 0px;
+            --offset-y: 0px;
+            width: var(--w);
+            height: var(--h);
+        }
+
+        .cellWrap {
+            position: absolute;
+            width: 200%;
+            height: 200%;
+            overflow: hidden;
+            z-index: 1;
+            background-color: #777;
+            transform-origin: bottom left;
+
+            &::after {
+                content: '';
+                width: 1px;
+                height: 1px;
+                border-radius: 50%;
+                background-color: #000;
+                position: absolute;
+                box-shadow: 0 0 0 5px #000;
+            }
+
+            &.fromBottom {
+                right: 0;
+                bottom: 0;
+
+                transform: rotate(var(--angle));
+                transform-origin: 50% 50%;
+
+                .cell {
+                    bottom: 0;
+                    right: 0;
+                    transform: rotate(calc(var(--angle) * -1));
+                    transform-origin: 0 0;
+                }
+
+                .back {
+                    transform: rotate(calc(var(--angle) * 2));
+                    transform-origin: 0 calc(var(--w) / tan((180deg - var(--angle)) / 2));
+                }
+            }
+
+            &.fromTop {
+                right: calc(-1 * var(--offset-x));
+                top: calc(-1 * var(--offset-y));
+
+                --angle: -30deg;
+                /* --angle-tan: tan(var(--angle));
+                --angle-cos: cos(var(--angle));
+                --temp-a: calc(var(--w) - var(--offset-x));
+                --temp-b: calc(var(--temp-a) * var(--angle-tan));
+                --temp-c: calc(var(--temp-a) / var(--angle-cos));
+                --temp-d: calc(var(--w) - var(--temp-c));
+                --temp-e: calc(var(--temp-c) / var(--temp-b) * var(--temp-d));
+                --point-y: calc(var(--h) - (var(--temp-e) - var(--temp-b))); */
+                transform: rotate(var(--angle));
+                transform-origin: 50% 50%;
+
+                &::after {
+                    left: 50%;
+                    top: 50%;
+                }
+
+                .cell {
+                    top: var(--offset-y);
+                    right: var(--offset-x);
+                    transform: rotate(calc(var(--angle) * -1));
+                    transform-origin: var(--offset-x) calc(100% - var(--offset-y));
+                }
+
+                .back {
+                    transform: rotate(calc(var(--angle) * 2));
+                    transform-origin: 0 var(--point-y);
+                }
+            }
+        }
+
+        .cellWrap,
+        .cellWrap .cell,
+        .cellWrap .cell .back {
+            transition: all 0.4s ease-out;
+        }
+
+        .cellWrap.dragging,
+        .cellWrap.dragging .cell,
+        .cellWrap.dragging .cell .back {
+            transition-duration: 0s;
+        }
+
+        .cellWrap:first-child .front {
+            background-color: skyblue;
+        }
+
+        .cell {
+            position: absolute;
+            overflow: visible;
+        }
+
+        .front {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            background-color: #f5f5f5;
+        }
+
+        .back {
+            position: absolute;
+            top: 0;
+            left: 100%;
+            width: 100%;
+            height: 100%;
+            background-color: pink;
+            transform-origin: bottom left;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="page">
+        <div class="cellWrap">
+            <div class="cell">
+                <div class="front">第二页是蓝色</div>
+                <div class="back">111BBBB</div>
+            </div>
+        </div>
+        <div class="cellWrap fromTop fromBottom1" id="pageCell">
+            <div class="cell">
+                <div class="front">第一页是白色</div>
+                <div class="back">222BBBB</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let isDragging = false;
+        let offset = { x: 0, y: 0 };
+        const draggable = document.getElementById('pageCell');
+        const draggableChild = draggable.firstElementChild;
+        const draggableNext = draggableChild.lastElementChild;
+
+        const getOffsetY = () => {
+            // 将角度从度转换为弧度
+            const width = 300;
+            const height = 500;
+            const offsetX = 0;
+            const angle = -30;
+            const angleRad = angle * (Math.PI / 180);
+
+            // 计算三角函数值
+            const angleTan = Math.tan(angleRad);
+            const angleCos = Math.cos(angleRad);
+
+            // 计算中间变量
+            const tempA = width - offsetX;
+            const tempB = tempA * angleTan;
+            const tempC = tempA / angleCos;
+            const tempD = width - tempC;
+            const tempE = (tempC / tempB) * tempD;
+            const pointY = height - tempE - tempB;
+
+            return pointY;
+        };
+
+        const setPos = (xOffset, yOffset) => {
+            console.log('[dodo] ', 'xOffset, yOffset', xOffset, yOffset, getOffsetY());
+            draggable.style.setProperty('--angle', `-30deg`);
+            draggable.style.setProperty('--point-y', `${getOffsetY()}px`);
+        };
+
+        const handleDragEnd = () => {
+            draggable.classList.remove('dragging');
+            isDragging = false;
+            // setPos(0, 0);
+        };
+
+        const handleMouseDown = (e) => {
+            isDragging = true;
+            offset.x = e.clientX;
+            offset.y = e.clientY;
+            draggable.classList.add('dragging');
+        };
+
+        const handleMouseMove = (e) => {
+            if (isDragging) {
+                const xOffset = (e.clientX - offset.x) / 2;
+                const yOffset = e.clientY - offset.y;
+                setPos(xOffset, yOffset);
+            }
+        };
+
+
+        const handleTouchStart = (e) => {
+            isDragging = true;
+            const touch = e.touches[0];
+            offset.x = touch.clientX;
+            offset.y = touch.clientY;
+        };
+
+        const handleTouchMove = (e) => {
+            if (isDragging) {
+                const touch = e.touches[0];
+                const xOffset = (touch.clientX - offset.x) / 2;
+                const yOffset = touch.clientY - offset.y;
+                setPos(xOffset, yOffset);
+            }
+        };
+
+        setPos(0, 0)
+
+
+        draggable.addEventListener('mousedown', handleMouseDown);
+        document.addEventListener('mousemove', handleMouseMove);
+        document.addEventListener('mouseup', handleDragEnd);
+
+        draggable.addEventListener('touchstart', handleTouchStart);
+        document.addEventListener('touchmove', handleTouchMove);
+        document.addEventListener('touchend', handleDragEnd);
+    </script>
+</body>
+
+</html>
