@@ -21,12 +21,16 @@
             /* overflow: hidden; */
         }
 
-        #page,
-        .cell {
+        #page {
             --w: 300px;
             --h: 500px;
             --offset-x: 0px;
             --offset-y: 0px;
+            width: var(--w);
+            height: var(--h);
+        }
+
+        .cell {
             width: var(--w);
             height: var(--h);
         }
@@ -84,10 +88,10 @@
                 --temp-e: calc(var(--temp-c) / var(--temp-b) * var(--temp-d));
                 --point-y: calc(var(--h) - (var(--temp-e) - var(--temp-b))); */
                 transform: rotate(var(--angle));
-                transform-origin: 50% 50%;
+                transform-origin: calc(50% + var(--offset-x)) 50%;
 
                 &::after {
-                    left: 50%;
+                    left: calc(50% + var(--offset-x));
                     top: 50%;
                 }
 
@@ -95,7 +99,7 @@
                     top: var(--offset-y);
                     right: var(--offset-x);
                     transform: rotate(calc(var(--angle) * -1));
-                    transform-origin: var(--offset-x) calc(100% - var(--offset-y));
+                    transform-origin: calc(2 * var(--offset-x)) calc(100% - var(--offset-y));
                 }
 
                 .back {
@@ -160,41 +164,44 @@
             </div>
         </div>
     </div>
+    <script src="https://unpkg.com/vconsole@latest/dist/vconsole.min.js"></script>
+    <script>
+        // VConsole 默认会挂载到 `window.VConsole` 上
+        var vConsole = new window.VConsole();
+    </script>
 
     <script>
         let isDragging = false;
+        let angle = -45;
+        let offsetX = 150;
+        let offsetY = 0;
         let offset = { x: 0, y: 0 };
+        // 将角度从度转换为弧度
+        const width = 300;
+        const height = 500;
+
         const draggable = document.getElementById('pageCell');
+        const page = document.getElementById('page');
         const draggableChild = draggable.firstElementChild;
         const draggableNext = draggableChild.lastElementChild;
 
         const getOffsetY = () => {
-            // 将角度从度转换为弧度
-            const width = 300;
-            const height = 500;
-            const offsetX = 0;
-            const angle = -30;
-            const angleRad = angle * (Math.PI / 180);
-
             // 计算三角函数值
+            const angleRad = Math.abs(angle * (Math.PI / 180));
             const angleTan = Math.tan(angleRad);
             const angleCos = Math.cos(angleRad);
 
-            // 计算中间变量
-            const tempA = width - offsetX;
-            const tempB = tempA * angleTan;
-            const tempC = tempA / angleCos;
-            const tempD = width - tempC;
-            const tempE = (tempC / tempB) * tempD;
-            const pointY = height - tempE - tempB;
-
-            return pointY;
+            const rotateWidth = width - offsetX;
+            const sideExtra = (rotateWidth / angleCos) - (width - offsetX * 2);
+            return height - sideExtra / angleTan - offsetY;
         };
 
         const setPos = (xOffset, yOffset) => {
             console.log('[dodo] ', 'xOffset, yOffset', xOffset, yOffset, getOffsetY());
-            draggable.style.setProperty('--angle', `-30deg`);
-            draggable.style.setProperty('--point-y', `${getOffsetY()}px`);
+            draggable.style.setProperty('--angle', `${angle}deg`);
+            page.style.setProperty('--point-y', `${getOffsetY()}px`);
+            page.style.setProperty('--offset-x', `${offsetX}px`);
+            page.style.setProperty('--offset-y', `${offsetY}px`);
         };
 
         const handleDragEnd = () => {
@@ -235,7 +242,7 @@
             }
         };
 
-        setPos(0, 0)
+        setPos(0, 0);
 
 
         draggable.addEventListener('mousedown', handleMouseDown);

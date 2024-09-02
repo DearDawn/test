@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>WebRTC Example</title>
+</head>
+<body>
+  <h1>WebRTC Example</h1>
+  <div>
+    <button id="createOfferBtn">Create Offer</button>
+    <button id="createAnswerBtn">Create Answer</button>
+    <button id="addAnswerBtn">Add Answer</button>
+  </div>
+  <div>
+    <h2>Offer/Answer Exchange</h2>
+    <textarea id="offerInput" placeholder="Paste Offer here"></textarea>
+    <textarea id="answerInput" placeholder="Paste Answer here"></textarea>
+  </div>
+  <div>
+    <h2>Media Streams</h2>
+    <video id="localVideo" autoplay playsinline></video>
+    <video id="remoteVideo" autoplay playsinline></video>
+  </div>
+  <script>
+    const peerConnection = new RTCPeerConnection();
+
+    let offer;
+    let answer;
+
+    // 获取本地媒体流
+    navigator.mediaDevices.getUserMedia({ video: true, audio: true })
+      .then(stream => {
+        document.getElementById('localVideo').srcObject = stream;
+        stream.getTracks().forEach(track => peerConnection.addTrack(track, stream));
+      })
+      .catch(error => console.error('Error accessing media devices.', error));
+
+    // 监听ICE候选事件
+    peerConnection.onicecandidate = (event) => {
+      if (event.candidate) {
+        console.log(`New ICE candidate: ${JSON.stringify(event.candidate)}`);
+        // 在这里你可以将ICE候选发送给对方
+      }
+    };
+
+    // 监听远程流接收事件
+    peerConnection.ontrack = (event) => {
+      console.log('Received remote stream');
+      const remoteVideo = document.getElementById('remoteVideo');
+      remoteVideo.srcObject = event.streams[0];
+    };
+
+    // 创建Offer
+    async function createOffer() {
+      offer = await peerConnection.createOffer();
+      await peerConnection.setLocalDescription(offer);
+      console.log(`Offer: ${JSON.stringify(offer)}`);
+      document.getElementById('offerInput').value = JSON.stringify(offer);
+    }
+
+    // 创建Answer
+    async function createAnswer() {
+      const offerString = document.getElementById('offerInput').value;
+      offer = JSON.parse(offerString);
+      await peerConnection.setRemoteDescription(offer);
+      answer = await peerConnection.createAnswer();
+      await peerConnection.setLocalDescription(answer);
+      console.log(`Answer: ${JSON.stringify(answer)}`);
+      document.getElementById('answerInput').value = JSON.stringify(answer);
+    }
+
+    // 添加Answer
+    async function addAnswer() {
+      const answerString = document.getElementById('answerInput').value;
+      answer = JSON.parse(answerString);
+      await peerConnection.setRemoteDescription(answer);
+    }
+
+    // 绑定按钮事件
+    document.getElementById('createOfferBtn').onclick = createOffer;
+    document.getElementById('createAnswerBtn').onclick = createAnswer;
+    document.getElementById('addAnswerBtn').onclick = addAnswer;
+  </script>
+</body>
+</html>
