@@ -26,6 +26,7 @@
     }
 
     .scene {
+      min-width: fit-content;
       width: 100%;
       height: 100%;
       transform-style: preserve-3d;
@@ -43,13 +44,68 @@
     }
 
     .table {
-      width: 400px;
-      height: 300px;
+      --table-w: 400px;
+      --table-h: 300px;
+      width: var(--table-w);
+      height: var(--table-h);
       background-color: #d3d3d3;
       position: relative;
       z-index: 1;
-      box-shadow: 0 0 10px #000;
+      background: linear-gradient(30deg, #ddd 0%, #fff 30%, #fff 50%, #ddd 100%);
+      box-shadow: inset 0 -5px 10px #fff;
+
+      /* box-shadow: 0 0 10px #000; */
+      transform-style: preserve-3d;
+      /* border: solid 1px rgba(255, 255, 255, 0.5); */
       /* transform: translateZ(100px); */
+    }
+
+    .side {
+      /* border: solid 1px rgba(255, 255, 255, 0.5); */
+
+      &.front {
+        width: var(--table-w);
+        height: 10px;
+        background-color: #d3d3d3;
+
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        transform: translate3d(0, 5px, -5px) rotate3d(1, 0, 0, 90deg);
+      }
+
+      &.left {
+        width: 10px;
+        height: var(--table-h);
+        background-color: #d3d3d3;
+
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        transform: translate3d(-5px, 0, -5px) rotate3d(0, 1, 0, 90deg);
+      }
+
+      &.right {
+        width: 10px;
+        height: var(--table-h);
+        background-color: #d3d3d3;
+
+        position: absolute;
+        bottom: 0;
+        right: 0;
+        transform: translate3d(5px, 0, -5px) rotate3d(0, 1, 0, 90deg);
+      }
+
+      &.bottom {
+        width: var(--table-w);
+        height: var(--table-h);
+        background-color: #d3d3d3;
+        filter: brightness(0.7);
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        transform: translate3d(0, 0, -10px) rotate3d(0, 0, 0, 0);
+      }
     }
 
     .wall {
@@ -92,6 +148,10 @@
   <div class="scene" id="scene">
     <div class="wall"></div>
     <div class="table">
+      <div class="side front"></div>
+      <div class="side left"></div>
+      <div class="side right"></div>
+      <div class="side bottom"></div>
       <div class="book" id="book"></div>
       <div class="phone" id="phone"></div>
     </div>
@@ -184,7 +244,6 @@
 
         rotationZ -= deltaX * 0.5;
         rotationX = Math.min(Math.max(0, rotationX - deltaY * 0.5), 180); // 上下方向的判断反了，所以这里用减号
-        console.log('[dodo] ', 'rotationX', rotationX, rotationZ);
 
         setScene({ x: 0, y: 0, rx: rotationX, rz: rotationZ, s: scale, d: 0 });
 
@@ -203,9 +262,62 @@
 
         const delta = event.deltaY;
         scale *= 1 + delta * 0.001;
-        scale = Math.min(Math.max(0.5, scale), 2); // 限制缩放范围
+        scale = Math.min(Math.max(0.5, scale), 5); // 限制缩放范围
 
         setScene({ x: 0, y: 0, rx: rotationX, rz: rotationZ, s: scale, d: 0 });
+      });
+
+      // 多点触摸缩放
+      let initialDistance = 0;
+      let initialScale = 1;
+
+      // 触摸开始事件
+      document.addEventListener('touchstart', (event) => {
+        if (event.touches.length > 1) {
+          initialDistance = Math.hypot(
+            event.touches[0].clientX - event.touches[1].clientX,
+            event.touches[0].clientY - event.touches[1].clientY
+          );
+          initialScale = scale;
+        }
+
+        isDragging = true;
+        previousX = event.touches[0].clientX;
+        previousY = event.touches[0].clientY;
+      });
+
+      // 触摸移动事件
+      document.addEventListener('touchmove', (event) => {
+        if (!isDragging || bigMode) return;
+
+        const deltaX = event.touches[0].clientX - previousX;
+        const deltaY = event.touches[0].clientY - previousY;
+
+        rotationZ -= deltaX * 0.5;
+        rotationX = Math.min(Math.max(0, rotationX - deltaY * 0.5), 180); // 上下方向的判断反了，所以这里用减号
+
+        setScene({ x: 0, y: 0, rx: rotationX, rz: rotationZ, s: scale, d: 0 });
+
+        previousX = event.touches[0].clientX;
+        previousY = event.touches[0].clientY;
+      });
+
+      // 触摸结束事件
+      document.addEventListener('touchend', () => {
+        isDragging = false;
+      });
+
+      document.addEventListener('touchmove', (event) => {
+        if (event.touches.length === 2) {
+          const currentDistance = Math.hypot(
+            event.touches[0].clientX - event.touches[1].clientX,
+            event.touches[0].clientY - event.touches[1].clientY
+          );
+          scale = initialScale * (currentDistance / initialDistance);
+          scale = Math.min(Math.max(0.5, scale), 5); // 限制缩放范围
+
+          setScene({ x: 0, y: 0, rx: rotationX, rz: rotationZ, s: scale, d: 0 });
+        }
       });
     })()
   </script>
