@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>3D Scene with CSS</title>
+  <style>
+    html,
+    body {
+      width: 100%;
+      height: 100%;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      /* transform: scale(0.5); */
+      background-color: gray;
+      overflow: visible;
+    }
+
+    body {
+      perspective: 1000px;
+      overflow: hidden;
+    }
+
+    .scene {
+      width: 100%;
+      height: 100%;
+      transform-style: preserve-3d;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      transition: transform 0s;
+      transform-origin: center;
+      --offset-x: 0px;
+      --offset-y: 0px;
+      --scale: 1;
+      --rotate-x: 0deg;
+      --rotate-z: 0deg;
+      transform: translateZ(-100px) scale(var(--scale)) translate(var(--offset-x), var(--offset-y)) rotateX(var(--rotate-x)) rotateZ(var(--rotate-z));
+    }
+
+    .table {
+      width: 400px;
+      height: 300px;
+      background-color: #d3d3d3;
+      position: relative;
+      z-index: 1;
+      box-shadow: 0 0 10px #000;
+      /* transform: translateZ(100px); */
+    }
+
+    .wall {
+      width: 800;
+      height: 600px;
+      position: absolute;
+      inset: 0;
+      margin: auto;
+      z-index: 1;
+      background-color: #fff;
+      transform: translate3d(0, -150px, 0) rotate3d(1, 0, 0, 90deg);
+    }
+
+    .book,
+    .phone {
+      position: absolute;
+      transition: transform 0.5s;
+      z-index: 1;
+    }
+
+    .book {
+      width: 100px;
+      height: 150px;
+      background-color: #f0e68c;
+      bottom: 20px;
+      left: 20px;
+    }
+
+    .phone {
+      width: 100px;
+      height: 100px;
+      background-color: #808080;
+      bottom: 20px;
+      right: 10px;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="scene" id="scene">
+    <div class="wall"></div>
+    <div class="table">
+      <div class="book" id="book"></div>
+      <div class="phone" id="phone"></div>
+    </div>
+  </div>
+  <script src="https://unpkg.com/vconsole@latest/dist/vconsole.min.js"></script>
+  <script>
+    // VConsole 默认会挂载到 `window.VConsole` 上
+    var vConsole = new window.VConsole();
+  </script>
+
+  <script>
+    (() => {
+      let bigMode = false;
+      let isDragging = false;
+      let previousX, previousY;
+      let rotationX = 75;
+      let rotationZ = 0;
+      let scale = 1;
+
+      const sceneDom = document.getElementById('scene');
+      const phoneDom = document.getElementById('phone');
+      const bookDom = document.getElementById('book');
+      const phoneRect = phoneDom.getBoundingClientRect();
+      const bookRect = bookDom.getBoundingClientRect();
+      const sceneRect = sceneDom.getBoundingClientRect();
+
+      const setScene = ({ x, y, rx, rz = 0, s, d = 0.5 }) => {
+        sceneDom.style.setProperty('--offset-x', `${x}px`);
+        sceneDom.style.setProperty('--offset-y', `${y}px`);
+        sceneDom.style.setProperty('--rotate-x', `${rx}deg`);
+        sceneDom.style.setProperty('--rotate-z', `${rz}deg`);
+        sceneDom.style.setProperty('--scale', s);
+        sceneDom.style.transitionDuration = `${d}s`;
+        rotationZ = rz;
+      };
+
+      sceneDom.style.setProperty('--rotate-x', `${rotationX}deg`);
+      sceneDom.style.setProperty('--rotate-z', `${rotationZ}deg`);
+
+      sceneDom.addEventListener('click', function () {
+        if (!bigMode) return;
+
+        setScene({ x: 0, y: 0, r: rotationX, s: 1 });
+        bigMode = !bigMode;
+      });
+
+      phoneDom.addEventListener('click', function (e) {
+        e.stopPropagation();
+
+        if (bigMode) {
+          setScene({ x: 0, y: 0, rx: rotationX, s: 1 });
+        } else {
+          const centerX = phoneRect.left + phoneRect.width / 2 - sceneRect.width / 2 - sceneRect.left;
+          const centerY = ((phoneRect.top + phoneRect.height / 2 - sceneRect.height / 2 - sceneRect.top));
+
+          setScene({ x: -centerX, y: -centerY, rx: 0, s: 2 });
+        }
+
+        bigMode = !bigMode;
+      }, false);
+
+      bookDom.addEventListener('click', function (e) {
+        e.stopPropagation();
+
+        if (bigMode) {
+          setScene({ x: 0, y: 0, rx: rotationX, s: 1 });
+        } else {
+          const centerX = bookRect.left + bookRect.width / 2 - sceneRect.width / 2 - sceneRect.left;
+          const centerY = ((bookRect.top + bookRect.height / 2 - sceneRect.height / 2 - sceneRect.top));
+
+          setScene({ x: -centerX, y: -centerY, rx: 0, s: 2 });
+        }
+
+        bigMode = !bigMode;
+      });
+
+      // 鼠标按下事件
+      document.addEventListener('mousedown', (event) => {
+        isDragging = true;
+        previousX = event.clientX;
+        previousY = event.clientY;
+      });
+
+      // 鼠标移动事件
+      document.addEventListener('mousemove', (event) => {
+        if (!isDragging || bigMode) return;
+
+        const deltaX = event.clientX - previousX;
+        const deltaY = event.clientY - previousY;
+
+        rotationZ -= deltaX * 0.5;
+        rotationX = Math.min(Math.max(0, rotationX - deltaY * 0.5), 180); // 上下方向的判断反了，所以这里用减号
+        console.log('[dodo] ', 'rotationX', rotationX, rotationZ);
+
+        setScene({ x: 0, y: 0, rx: rotationX, rz: rotationZ, s: scale, d: 0 });
+
+        previousX = event.clientX;
+        previousY = event.clientY;
+      });
+
+      // 鼠标释放事件
+      document.addEventListener('mouseup', () => {
+        isDragging = false;
+      });
+
+      // 滚轮事件
+      sceneDom.addEventListener('wheel', (event) => {
+        event.preventDefault();
+
+        const delta = event.deltaY;
+        scale *= 1 + delta * 0.001;
+        scale = Math.min(Math.max(0.5, scale), 2); // 限制缩放范围
+
+        setScene({ x: 0, y: 0, rx: rotationX, rz: rotationZ, s: scale, d: 0 });
+      });
+    })()
+  </script>
+</body>
+
+</html>
