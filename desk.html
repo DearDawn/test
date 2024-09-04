@@ -15,7 +15,6 @@
     }
 
     html {
-      /* transform: scale(0.5); */
       background-color: gray;
       overflow: visible;
     }
@@ -53,63 +52,58 @@
       z-index: 1;
       background: linear-gradient(30deg, #ddd 0%, #fff 30%, #fff 50%, #ddd 100%);
       box-shadow: inset 0 -5px 10px #fff;
-
-      /* box-shadow: 0 0 10px #000; */
       transform-style: preserve-3d;
-      /* border: solid 1px rgba(255, 255, 255, 0.5); */
-      /* transform: translateZ(100px); */
     }
 
     .side {
-      /* border: solid 1px rgba(255, 255, 255, 0.5); */
+      background-color: #d3d3d3;
+      position: absolute;
+      transform-style: preserve-3d;
+    }
 
-      &.front {
-        width: var(--table-w);
-        height: 10px;
-        background-color: #d3d3d3;
+    .side.front {
+      width: var(--table-w);
+      height: 10px;
+      bottom: 0;
+      left: 0;
+      transform: translate3d(0, 5px, -5px) rotate3d(1, 0, 0, 90deg);
+    }
 
-        position: absolute;
-        bottom: 0;
-        left: 0;
-        transform: translate3d(0, 5px, -5px) rotate3d(1, 0, 0, 90deg);
-      }
+    .side.back {
+      width: var(--table-w);
+      height: 10px;
+      bottom: 0;
+      left: 0;
+      transform: translate3d(0, -5px, -5px) rotate3d(1, 0, 0, 90deg);
+    }
 
-      &.left {
-        width: 10px;
-        height: var(--table-h);
-        background-color: #d3d3d3;
+    .side.left {
+      width: 10px;
+      height: var(--table-h);
+      bottom: 0;
+      left: 0;
+      transform: translate3d(-5px, 0, -5px) rotate3d(0, 1, 0, 90deg);
+    }
 
-        position: absolute;
-        bottom: 0;
-        left: 0;
-        transform: translate3d(-5px, 0, -5px) rotate3d(0, 1, 0, 90deg);
-      }
+    .side.right {
+      width: 10px;
+      height: var(--table-h);
+      bottom: 0;
+      right: 0;
+      transform: translate3d(5px, 0, -5px) rotate3d(0, 1, 0, 90deg);
+    }
 
-      &.right {
-        width: 10px;
-        height: var(--table-h);
-        background-color: #d3d3d3;
-
-        position: absolute;
-        bottom: 0;
-        right: 0;
-        transform: translate3d(5px, 0, -5px) rotate3d(0, 1, 0, 90deg);
-      }
-
-      &.bottom {
-        width: var(--table-w);
-        height: var(--table-h);
-        background-color: #d3d3d3;
-        filter: brightness(0.7);
-        position: absolute;
-        bottom: 0;
-        left: 0;
-        transform: translate3d(0, 0, -10px) rotate3d(0, 0, 0, 0);
-      }
+    .side.bottom {
+      width: var(--table-w);
+      height: var(--table-h);
+      filter: brightness(0.7);
+      bottom: 0;
+      left: 0;
+      transform: translate3d(0, 0, -10px) rotate3d(0, 0, 0, 0);
     }
 
     .wall {
-      width: 800;
+      width: 800px;
       height: 600px;
       position: absolute;
       inset: 0;
@@ -145,181 +139,244 @@
 </head>
 
 <body>
-  <div class="scene" id="scene">
-    <div class="wall"></div>
-    <div class="table">
-      <div class="side front"></div>
-      <div class="side left"></div>
-      <div class="side right"></div>
-      <div class="side bottom"></div>
-      <div class="book" id="book"></div>
-      <div class="phone" id="phone"></div>
-    </div>
-  </div>
+  <div class="scene" id="scene"></div>
   <script src="https://unpkg.com/vconsole@latest/dist/vconsole.min.js"></script>
   <script>
     // VConsole 默认会挂载到 `window.VConsole` 上
     var vConsole = new window.VConsole();
   </script>
-
   <script>
-    (() => {
-      let bigMode = false;
-      let isDragging = false;
-      let previousX, previousY;
-      let rotationX = 75;
-      let rotationZ = 0;
-      let scale = 1;
+    let scene;
 
-      const sceneDom = document.getElementById('scene');
-      const phoneDom = document.getElementById('phone');
-      const bookDom = document.getElementById('book');
-      const phoneRect = phoneDom.getBoundingClientRect();
-      const bookRect = bookDom.getBoundingClientRect();
-      const sceneRect = sceneDom.getBoundingClientRect();
+    class Scene {
+      constructor(dom) {
+        this.dom = dom;
+        this.camera = new Camera(this);
+        this.models = [];
+        this.initEventListeners();
+      }
 
-      const setScene = ({ x, y, rx, rz = 0, s, d = 0.5 }) => {
-        sceneDom.style.setProperty('--offset-x', `${x}px`);
-        sceneDom.style.setProperty('--offset-y', `${y}px`);
-        sceneDom.style.setProperty('--rotate-x', `${rx}deg`);
-        sceneDom.style.setProperty('--rotate-z', `${rz}deg`);
-        sceneDom.style.setProperty('--scale', s);
-        sceneDom.style.transitionDuration = `${d}s`;
-        rotationZ = rz;
-      };
+      append(model) {
+        this.models.push(model);
+        this.dom.appendChild(model.dom);
+      }
 
-      sceneDom.style.setProperty('--rotate-x', `${rotationX}deg`);
-      sceneDom.style.setProperty('--rotate-z', `${rotationZ}deg`);
+      initEventListeners() {
+        this.dom.addEventListener('click', () => {
+          if (!this.camera.bigMode) return;
+          this.camera.reset();
+        });
 
-      sceneDom.addEventListener('click', function () {
-        if (!bigMode) return;
+        document.addEventListener('mousedown', (event) => {
+          this.camera.startDrag(event);
+        });
 
-        setScene({ x: 0, y: 0, r: rotationX, s: 1 });
-        bigMode = !bigMode;
-      });
+        document.addEventListener('mousemove', (event) => {
+          this.camera.drag(event);
+        });
 
-      phoneDom.addEventListener('click', function (e) {
-        e.stopPropagation();
+        document.addEventListener('mouseup', () => {
+          this.camera.endDrag();
+        });
 
-        if (bigMode) {
-          setScene({ x: 0, y: 0, rx: rotationX, s: 1 });
-        } else {
-          const centerX = phoneRect.left + phoneRect.width / 2 - sceneRect.width / 2 - sceneRect.left;
-          const centerY = ((phoneRect.top + phoneRect.height / 2 - sceneRect.height / 2 - sceneRect.top));
+        this.dom.addEventListener('wheel', (event) => {
+          this.camera.zoom(event);
+        });
 
-          setScene({ x: -centerX, y: -centerY, rx: 0, s: 2 });
-        }
+        document.addEventListener('touchstart', (event) => {
+          this.camera.startTouch(event);
+        });
 
-        bigMode = !bigMode;
-      }, false);
+        document.addEventListener('touchmove', (event) => {
+          this.camera.touchMove(event);
+        });
 
-      bookDom.addEventListener('click', function (e) {
-        e.stopPropagation();
+        document.addEventListener('touchend', () => {
+          this.camera.endTouch();
+        });
+      }
+    }
 
-        if (bigMode) {
-          setScene({ x: 0, y: 0, rx: rotationX, s: 1 });
-        } else {
-          const centerX = bookRect.left + bookRect.width / 2 - sceneRect.width / 2 - sceneRect.left;
-          const centerY = ((bookRect.top + bookRect.height / 2 - sceneRect.height / 2 - sceneRect.top));
+    class Camera {
+      constructor(scene) {
+        this.scene = scene;
+        this.bigMode = false;
+        this.isDragging = false;
+        this.previousX = 0;
+        this.previousY = 0;
+        this.rotationX = 75;
+        this.rotationZ = 0;
+        this.scale = 1;
+        this.initialDistance = 0;
+        this.initialScale = 1;
 
-          setScene({ x: -centerX, y: -centerY, rx: 0, s: 2 });
-        }
+        this.sceneDom = scene.dom;
+        this.sceneRect = this.sceneDom.getBoundingClientRect();
 
-        bigMode = !bigMode;
-      });
+        this.setScene({ x: 0, y: 0, rx: this.rotationX, rz: this.rotationZ, s: this.scale });
+      }
 
-      // 鼠标按下事件
-      document.addEventListener('mousedown', (event) => {
-        isDragging = true;
-        previousX = event.clientX;
-        previousY = event.clientY;
-      });
+      setScene({ x, y, rx, rz = 0, s, d = 0.5 }) {
+        this.sceneDom.style.setProperty('--offset-x', `${x}px`);
+        this.sceneDom.style.setProperty('--offset-y', `${y}px`);
+        this.sceneDom.style.setProperty('--rotate-x', `${rx}deg`);
+        this.sceneDom.style.setProperty('--rotate-z', `${rz}deg`);
+        this.sceneDom.style.setProperty('--scale', s);
+        this.sceneDom.style.transitionDuration = `${d}s`;
+        this.rotationZ = rz;
+      }
 
-      // 鼠标移动事件
-      document.addEventListener('mousemove', (event) => {
-        if (!isDragging || bigMode) return;
+      reset() {
+        this.setScene({ x: 0, y: 0, rx: this.rotationX, s: 1 });
+        this.bigMode = false;
+      }
 
-        const deltaX = event.clientX - previousX;
-        const deltaY = event.clientY - previousY;
+      focus(x, y, z) {
+        this.setScene({ x: x, y: y, rx: 0, s: 2 });
+        this.bigMode = true;
+      }
 
-        rotationZ -= deltaX * 0.5;
-        rotationX = Math.min(Math.max(0, rotationX - deltaY * 0.5), 180); // 上下方向的判断反了，所以这里用减号
+      startDrag(event) {
+        this.isDragging = true;
+        this.previousX = event.clientX;
+        this.previousY = event.clientY;
+      }
 
-        setScene({ x: 0, y: 0, rx: rotationX, rz: rotationZ, s: scale, d: 0 });
+      drag(event) {
+        if (!this.isDragging || this.bigMode) return;
 
-        previousX = event.clientX;
-        previousY = event.clientY;
-      });
+        const deltaX = event.clientX - this.previousX;
+        const deltaY = event.clientY - this.previousY;
 
-      // 鼠标释放事件
-      document.addEventListener('mouseup', () => {
-        isDragging = false;
-      });
+        this.rotationZ -= deltaX * 0.5;
+        this.rotationX = Math.min(Math.max(0, this.rotationX - deltaY * 0.5), 180);
 
-      // 滚轮事件
-      sceneDom.addEventListener('wheel', (event) => {
+        this.setScene({ x: 0, y: 0, rx: this.rotationX, rz: this.rotationZ, s: this.scale, d: 0 });
+
+        this.previousX = event.clientX;
+        this.previousY = event.clientY;
+      }
+
+      endDrag() {
+        this.isDragging = false;
+      }
+
+      zoom(event) {
         event.preventDefault();
 
         const delta = event.deltaY;
-        scale *= 1 + delta * 0.001;
-        scale = Math.min(Math.max(0.5, scale), 5); // 限制缩放范围
+        this.scale *= 1 + delta * 0.001;
+        this.scale = Math.min(Math.max(0.5, this.scale), 5);
 
-        setScene({ x: 0, y: 0, rx: rotationX, rz: rotationZ, s: scale, d: 0 });
-      });
+        this.setScene({ x: 0, y: 0, rx: this.rotationX, rz: this.rotationZ, s: this.scale, d: 0 });
+      }
 
-      // 多点触摸缩放
-      let initialDistance = 0;
-      let initialScale = 1;
-
-      // 触摸开始事件
-      document.addEventListener('touchstart', (event) => {
+      startTouch(event) {
         if (event.touches.length > 1) {
-          initialDistance = Math.hypot(
+          this.initialDistance = Math.hypot(
             event.touches[0].clientX - event.touches[1].clientX,
             event.touches[0].clientY - event.touches[1].clientY
           );
-          initialScale = scale;
+          this.initialScale = this.scale;
         }
 
-        isDragging = true;
-        previousX = event.touches[0].clientX;
-        previousY = event.touches[0].clientY;
-      });
+        this.isDragging = true;
+        this.previousX = event.touches[0].clientX;
+        this.previousY = event.touches[0].clientY;
+      }
 
-      // 触摸移动事件
-      document.addEventListener('touchmove', (event) => {
-        if (!isDragging || bigMode) return;
+      touchMove(event) {
+        if (!this.isDragging || this.bigMode) return;
 
-        const deltaX = event.touches[0].clientX - previousX;
-        const deltaY = event.touches[0].clientY - previousY;
+        const deltaX = event.touches[0].clientX - this.previousX;
+        const deltaY = event.touches[0].clientY - this.previousY;
 
-        rotationZ -= deltaX * 0.5;
-        rotationX = Math.min(Math.max(0, rotationX - deltaY * 0.5), 180); // 上下方向的判断反了，所以这里用减号
+        this.rotationZ -= deltaX * 0.5;
+        this.rotationX = Math.min(Math.max(0, this.rotationX - deltaY * 0.5), 180);
 
-        setScene({ x: 0, y: 0, rx: rotationX, rz: rotationZ, s: scale, d: 0 });
+        this.setScene({ x: 0, y: 0, rx: this.rotationX, rz: this.rotationZ, s: this.scale, d: 0 });
 
-        previousX = event.touches[0].clientX;
-        previousY = event.touches[0].clientY;
-      });
+        this.previousX = event.touches[0].clientX;
+        this.previousY = event.touches[0].clientY;
 
-      // 触摸结束事件
-      document.addEventListener('touchend', () => {
-        isDragging = false;
-      });
-
-      document.addEventListener('touchmove', (event) => {
         if (event.touches.length === 2) {
           const currentDistance = Math.hypot(
             event.touches[0].clientX - event.touches[1].clientX,
             event.touches[0].clientY - event.touches[1].clientY
           );
-          scale = initialScale * (currentDistance / initialDistance);
-          scale = Math.min(Math.max(0.5, scale), 5); // 限制缩放范围
+          this.scale = this.initialScale * (currentDistance / this.initialDistance);
+          this.scale = Math.min(Math.max(0.5, this.scale), 2);
 
-          setScene({ x: 0, y: 0, rx: rotationX, rz: rotationZ, s: scale, d: 0 });
+          this.setScene({ x: 0, y: 0, rx: this.rotationX, rz: this.rotationZ, s: this.scale, d: 0 });
         }
-      });
-    })()
+      }
+
+      endTouch() {
+        this.isDragging = false;
+      }
+    }
+
+    class Block {
+      constructor(width, height) {
+        this.models = [];
+        this.dom = document.createElement('div');
+        this.dom.className = 'table';
+        this.dom.style.setProperty('--table-w', `${width}px`);
+        this.dom.style.setProperty('--table-h', `${height}px`);
+
+        const sides = ['front', 'left', 'right', 'bottom', 'back'];
+        sides.forEach(side => {
+          const sideDom = document.createElement('div');
+          sideDom.className = `side ${side}`;
+          this.dom.appendChild(sideDom);
+        });
+      }
+
+      append(model) {
+        this.models.push(model);
+        this.dom.appendChild(model.dom);
+      }
+    }
+
+    class Mesh {
+      constructor(className, width, height, bottom, left) {
+        this.dom = document.createElement('div');
+        this.dom.className = className;
+        this.dom.style.position = 'absolute';
+        this.dom.style.width = `${width}px`;
+        this.dom.style.height = `${height}px`;
+        this.dom.style.bottom = `${bottom}px`;
+        this.dom.style.left = `${left}px`;
+        this.initEventListeners();
+      }
+
+      initEventListeners() {
+        this.dom.addEventListener('click', (e) => {
+          e.stopPropagation();
+
+          if (scene.camera.bigMode) {
+            scene.camera.reset();
+          } else {
+            const rect = this.dom.getBoundingClientRect();
+            const centerX = rect.left + rect.width / 2 - scene.camera.sceneRect.width / 2 - scene.camera.sceneRect.left;
+            const centerY = rect.top + rect.height / 2 - scene.camera.sceneRect.height / 2 - scene.camera.sceneRect.top;
+
+            scene.camera.focus(centerX, centerY);
+          }
+        }, false);
+      }
+    }
+
+    scene = new Scene(document.getElementById('scene'));
+    const table = new Block(400, 300);
+    const wall = new Mesh('wall', 800, 600, 0, 0);
+    scene.append(table);
+    scene.append(wall);
+
+    const book = new Mesh('book', 100, 150, 20, 20);
+    const phone = new Mesh('phone', 100, 100, 20, 10);
+    table.append(book);
+    table.append(phone);
   </script>
 </body>
 
