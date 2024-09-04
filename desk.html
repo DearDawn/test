@@ -330,11 +330,31 @@
           sideDom.className = `side ${side}`;
           this.dom.appendChild(sideDom);
         });
+
+        this.updateBoundingRect();
       }
 
       append(model) {
         this.models.push(model);
         this.dom.appendChild(model.dom);
+      }
+
+      updateBoundingRect() {
+        const rect = this.dom.getBoundingClientRect();
+        this.boundingRect = {
+          left: rect.left,
+          top: rect.top,
+          width: rect.width,
+          height: rect.height
+        };
+      }
+
+      addClickListener(callback) {
+        this.dom.addEventListener('click', callback);
+      }
+
+      removeClickListener(callback) {
+        this.dom.removeEventListener('click', callback);
       }
     }
 
@@ -347,23 +367,26 @@
         this.dom.style.height = `${height}px`;
         this.dom.style.bottom = `${bottom}px`;
         this.dom.style.left = `${left}px`;
-        this.initEventListeners();
+
+        this.updateBoundingRect();
       }
 
-      initEventListeners() {
-        this.dom.addEventListener('click', (e) => {
-          e.stopPropagation();
+      updateBoundingRect() {
+        const rect = this.dom.getBoundingClientRect();
+        this.boundingRect = {
+          left: rect.left,
+          top: rect.top,
+          width: rect.width,
+          height: rect.height
+        };
+      }
 
-          if (scene.camera.bigMode) {
-            scene.camera.reset();
-          } else {
-            const rect = this.dom.getBoundingClientRect();
-            const centerX = rect.left + rect.width / 2 - scene.camera.sceneRect.width / 2 - scene.camera.sceneRect.left;
-            const centerY = rect.top + rect.height / 2 - scene.camera.sceneRect.height / 2 - scene.camera.sceneRect.top;
+      addClickListener(callback) {
+        this.dom.addEventListener('click', callback);
+      }
 
-            scene.camera.focus(centerX, centerY);
-          }
-        }, false);
+      removeClickListener(callback) {
+        this.dom.removeEventListener('click', callback);
       }
     }
 
@@ -377,6 +400,28 @@
     const phone = new Mesh('phone', 100, 100, 20, 10);
     table.append(book);
     table.append(phone);
+
+    book.addClickListener((e) => {
+      e.stopPropagation();
+      if (scene.camera.bigMode) {
+        scene.camera.reset();
+      } else {
+        const centerX = book.boundingRect.left + book.boundingRect.width / 2 - scene.camera.sceneRect.width / 2 - scene.camera.sceneRect.left;
+        const centerY = book.boundingRect.top + book.boundingRect.height / 2 - scene.camera.sceneRect.height / 2 - scene.camera.sceneRect.top;
+        scene.camera.focus(centerX, centerY);
+      }
+    });
+
+    phone.addClickListener((e) => {
+      e.stopPropagation();
+      if (scene.camera.bigMode) {
+        scene.camera.reset();
+      } else {
+        const centerX = phone.boundingRect.left + phone.boundingRect.width / 2 - scene.camera.sceneRect.width / 2 - scene.camera.sceneRect.left;
+        const centerY = phone.boundingRect.top + phone.boundingRect.height / 2 - scene.camera.sceneRect.height / 2 - scene.camera.sceneRect.top;
+        scene.camera.focus(centerX, centerY);
+      }
+    });
   </script>
 </body>
 
