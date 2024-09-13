@@ -17,7 +17,7 @@ class Block {
     this.updateBoundingRect();
   }
 
-  setPosition ({ x, y, z }) {
+  setPosition (x, y, z) {
     this.dom.style.setProperty('--block-x', `${x}px`);
     this.dom.style.setProperty('--block-y', `${y}px`);
     this.dom.style.setProperty('--block-z', `${z}px`);
@@ -49,15 +49,13 @@ class Block {
 }
 
 class Mesh {
-  constructor ({ w = 200, l = 200 }) {
+  constructor ({ w = 200, l = 200, background = '#fff' }) {
     this.dom = document.createElement('div');
     this.dom.className = 'mesh';
     this.dom.style.position = 'absolute';
-    this.dom.style.width = `${l}px`;
-    this.dom.style.height = `${w}px`;
-
-    this.dom.style.left = `0px`;
-    this.dom.style.bottom = `0px`;
+    this.dom.style.background = background;
+    this.dom.style.setProperty('--mesh-l', `${l}px`);
+    this.dom.style.setProperty('--mesh-w', `${w}px`);
     this.updateBoundingRect();
   }
 
@@ -71,9 +69,18 @@ class Mesh {
     };
   }
 
-  setPosition ({ x, y }) {
-    this.dom.style.left = `${x}px`;
-    this.dom.style.bottom = `${y}px`;
+  setPosition (x, y, z) {
+    this.dom.style.setProperty('--mesh-x', `${x}px`);
+    this.dom.style.setProperty('--mesh-y', `${y}px`);
+    this.dom.style.setProperty('--mesh-z', `${z}px`);
+    this.updateBoundingRect();
+  }
+
+  rotate (x = 0, y = 0, z = 1, deg = 90) {
+    this.dom.style.setProperty('--mesh-rx', `${x}`);
+    this.dom.style.setProperty('--mesh-ry', `${y}`);
+    this.dom.style.setProperty('--mesh-rz', `${z}`);
+    this.dom.style.setProperty('--mesh-r', `${deg}deg`);
     this.updateBoundingRect();
   }
 

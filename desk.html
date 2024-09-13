@@ -106,17 +106,19 @@
       --block-h: 100px;
       --block-x: 0px;
       --block-y: 0px;
-      --block-z: 30px;
+      --block-z: 0px;
 
       width: var(--block-l);
       height: var(--block-w);
       background-color: #d3d3d3;
       position: absolute;
-      transform: translate3d(var(--block-x), var(--block-y), var(--block-z));
+      transform: translate3d(calc(-50% + var(--block-x)), calc(-50% + var(--block-y)), var(--block-z));
       z-index: 1;
       background: linear-gradient(30deg, #ddd 0%, #fff 30%, #fff 50%, #ddd 100%);
       box-shadow: inset 0 -5px 10px #fff;
       transform-style: preserve-3d;
+      top: 50%;
+      left: 50%;
 
       .side {
         background-color: #d3d3d3;
@@ -170,38 +172,24 @@
       }
     }
 
-    .wall {
-      width: 800px;
-      height: 600px;
+    .mesh {
+      --mesh-l: 300px;
+      --mesh-w: 300px;
+      --mesh-x: 0px;
+      --mesh-y: 0px;
+      --mesh-z: 0px;
+      --mesh-rx: 0;
+      --mesh-ry: 0;
+      --mesh-rz: 0;
+      --mesh-r: 0deg;
+
+      width: var(--mesh-l);
+      height: var(--mesh-w);
       position: absolute;
-      inset: 0;
-      margin: auto;
+      top: 50%;
+      left: 50%;
       z-index: 1;
-      background-color: #fff;
-      transform: translate3d(0, -150px, 0) rotate3d(1, 0, 0, 90deg);
-    }
-
-    .book,
-    .phone {
-      position: absolute;
-      transition: transform 0.5s;
-      z-index: 1;
-    }
-
-    .book {
-      width: 100px;
-      height: 150px;
-      background-color: #f0e68c;
-      bottom: 20px;
-      left: 20px;
-    }
-
-    .phone {
-      width: 100px;
-      height: 100px;
-      background-color: #808080;
-      bottom: 20px;
-      right: 10px;
+      transform: translate3d(calc(-50% + var(--mesh-x)), calc(-50% + var(--mesh-y)), var(--mesh-z)) rotate3d(var(--mesh-rx), var(--mesh-ry), var(--mesh-rz), var(--mesh-r));
     }
   </style>
 </head>
@@ -222,12 +210,15 @@
     scene.showAxis();
     scene.showPlain();
     const table = new Block({ l: 400, w: 300, h: 20 });
-    const wall = new Mesh({ l: 800, w: 600 });
+    table.setPosition(0, 0, 10);
+    const wall = new Mesh({ l: 600, w: 400, background: '#333' });
+    wall.setPosition(0, -150, 0);
+    wall.rotate(1, 0, 0, 90);
     scene.append(table);
     scene.append(wall);
 
-    const book = new Mesh('book', 100, 150, 20, 20);
-    const phone = new Mesh('phone', 100, 100, 20, 10);
+    const book = new Mesh({ l: 150, w: 100, background: 'pink' });
+    const phone = new Mesh({ l: 100, w: 100, background: 'yellow' });
     table.append(book);
     table.append(phone);
 
@@ -236,9 +227,7 @@
       if (scene.camera.bigMode) {
         scene.camera.reset();
       } else {
-        const centerX = book.boundingRect.left + book.boundingRect.width / 2 - scene.camera.sceneRect.width / 2 - scene.camera.sceneRect.left;
-        const centerY = book.boundingRect.top + book.boundingRect.height / 2 - scene.camera.sceneRect.height / 2 - scene.camera.sceneRect.top;
-        scene.camera.focus(centerX, centerY);
+        scene.camera.focus(0, 0);
       }
     });
 
@@ -247,9 +236,7 @@
       if (scene.camera.bigMode) {
         scene.camera.reset();
       } else {
-        const centerX = phone.boundingRect.left + phone.boundingRect.width / 2 - scene.camera.sceneRect.width / 2 - scene.camera.sceneRect.left;
-        const centerY = phone.boundingRect.top + phone.boundingRect.height / 2 - scene.camera.sceneRect.height / 2 - scene.camera.sceneRect.top;
-        scene.camera.focus(centerX, centerY);
+        scene.camera.focus(0, 0);
       }
     });
   </script>
