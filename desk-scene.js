@@ -1,5 +1,5 @@
 
-class Camera {
+export class Camera {
   constructor (scene) {
     this.scene = scene;
     this.bigMode = false;
@@ -8,6 +8,7 @@ class Camera {
     this.previousY = 0;
     this.rotationX = 75;
     this.rotationZ = 0;
+    this.previousRotationZ = 0;
     this.scale = 1;
     this.initialDistance = 0;
     this.initialScale = 1;
@@ -29,12 +30,13 @@ class Camera {
   }
 
   reset () {
-    this.setScene({ x: 0, y: 0, rx: this.rotationX, s: 1 });
+    this.setScene({ x: 0, y: 0, rx: this.rotationX, s: 1, rz: this.previousRotationZ });
     this.bigMode = false;
   }
 
   focus (x, y, z) {
-    this.setScene({ x: x, y: y, rx: 0, s: 2 });
+    this.previousRotationZ = this.rotationZ;
+    this.setScene({ x: -x, y: -y, rx: 0, s: 2 });
     this.bigMode = true;
   }
 
@@ -118,7 +120,7 @@ class Camera {
   }
 }
 
-class Scene {
+export class Scene {
   constructor (dom) {
     this.dom = dom;
     this.camera = new Camera(this);
