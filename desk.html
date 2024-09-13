@@ -40,66 +40,108 @@
       --rotate-x: 0deg;
       --rotate-z: 0deg;
       transform: translateZ(-100px) scale(var(--scale)) translate(var(--offset-x), var(--offset-y)) rotateX(var(--rotate-x)) rotateZ(var(--rotate-z));
+      border: #000 1px solid;
+
+      .axisX,
+      .axisY,
+      .axisZ {
+        position: absolute;
+        width: 300%;
+        height: 2px;
+        background-color: red;
+        transform-style: preserve-3d;
+
+        &::before {
+          content: '';
+          width: 100%;
+          height: 100%;
+          background-color: inherit;
+          position: absolute;
+          transform: rotate3d(1, 0, 0, 90deg);
+          top: 0;
+          left: 0;
+        }
+      }
+
+      .axisY {
+        background-color: green;
+        transform: rotate3d(0, 0, 1, 90deg);
+      }
+
+      .axisZ {
+        background-color: blue;
+        transform: rotate3d(0, 1, 0, 90deg);
+      }
     }
 
-    .table {
-      --table-w: 400px;
-      --table-h: 300px;
-      width: var(--table-w);
-      height: var(--table-h);
+    .block {
+      --block-l: 100px;
+      --block-w: 100px;
+      --block-h: 100px;
+      --block-x: 0px;
+      --block-y: 0px;
+      --block-z: 30px;
+
+      width: var(--block-l);
+      height: var(--block-w);
       background-color: #d3d3d3;
-      position: relative;
+      position: absolute;
+      transform: translate3d(var(--block-x), var(--block-y), var(--block-z));
       z-index: 1;
       background: linear-gradient(30deg, #ddd 0%, #fff 30%, #fff 50%, #ddd 100%);
       box-shadow: inset 0 -5px 10px #fff;
       transform-style: preserve-3d;
-    }
 
-    .side {
-      background-color: #d3d3d3;
-      position: absolute;
-      transform-style: preserve-3d;
-    }
+      .side {
+        background-color: #d3d3d3;
+        position: absolute;
+        transform-style: preserve-3d;
+      }
 
-    .side.front {
-      width: var(--table-w);
-      height: 10px;
-      bottom: 0;
-      left: 0;
-      transform: translate3d(0, 5px, -5px) rotate3d(1, 0, 0, 90deg);
-    }
+      .side.front {
+        width: var(--block-l);
+        height: var(--block-h);
+        bottom: 0;
+        left: 0;
+        transform: rotate3d(1, 0, 0, 90deg);
+        transform-origin: bottom;
+      }
 
-    .side.back {
-      width: var(--table-w);
-      height: 10px;
-      bottom: 0;
-      left: 0;
-      transform: translate3d(0, -5px, -5px) rotate3d(1, 0, 0, 90deg);
-    }
+      .side.back {
+        width: var(--block-l);
+        height: var(--block-h);
+        top: 0;
+        left: 0;
+        transform: rotate3d(1, 0, 0, -90deg);
+        transform-origin: top;
+      }
 
-    .side.left {
-      width: 10px;
-      height: var(--table-h);
-      bottom: 0;
-      left: 0;
-      transform: translate3d(-5px, 0, -5px) rotate3d(0, 1, 0, 90deg);
-    }
+      .side.left {
+        width: var(--block-h);
+        height: var(--block-w);
+        bottom: 0;
+        left: 0;
+        transform: rotate3d(0, 1, 0, 90deg);
+        transform-origin: left;
+      }
 
-    .side.right {
-      width: 10px;
-      height: var(--table-h);
-      bottom: 0;
-      right: 0;
-      transform: translate3d(5px, 0, -5px) rotate3d(0, 1, 0, 90deg);
-    }
+      .side.right {
+        width: var(--block-h);
+        height: var(--block-w);
+        bottom: 0;
+        right: 0;
+        transform: rotate3d(0, 1, 0, -90deg);
+        transform-origin: right;
+      }
 
-    .side.bottom {
-      width: var(--table-w);
-      height: var(--table-h);
-      filter: brightness(0.7);
-      bottom: 0;
-      left: 0;
-      transform: translate3d(0, 0, -10px) rotate3d(0, 0, 0, 0);
+      .side.bottom {
+        width: var(--block-l);
+        height: var(--block-w);
+        filter: brightness(0.7);
+        bottom: 0;
+        left: 0;
+        transform: translate3d(0, 0, calc(-1 * var(--block-h)));
+      }
     }
 
     .wall {
@@ -145,254 +187,15 @@
     // VConsole 默认会挂载到 `window.VConsole` 上
     var vConsole = new window.VConsole();
   </script>
+  <script src="./desk-scene.js"></script>
+  <script src="./desk-block.js"></script>
   <script>
     let scene;
 
-    class Scene {
-      constructor(dom) {
-        this.dom = dom;
-        this.camera = new Camera(this);
-        this.models = [];
-        this.initEventListeners();
-      }
-
-      append(model) {
-        this.models.push(model);
-        this.dom.appendChild(model.dom);
-      }
-
-      initEventListeners() {
-        this.dom.addEventListener('click', () => {
-          if (!this.camera.bigMode) return;
-          this.camera.reset();
-        });
-
-        document.addEventListener('mousedown', (event) => {
-          this.camera.startDrag(event);
-        });
-
-        document.addEventListener('mousemove', (event) => {
-          this.camera.drag(event);
-        });
-
-        document.addEventListener('mouseup', () => {
-          this.camera.endDrag();
-        });
-
-        this.dom.addEventListener('wheel', (event) => {
-          this.camera.zoom(event);
-        });
-
-        document.addEventListener('touchstart', (event) => {
-          this.camera.startTouch(event);
-        });
-
-        document.addEventListener('touchmove', (event) => {
-          this.camera.touchMove(event);
-        });
-
-        document.addEventListener('touchend', () => {
-          this.camera.endTouch();
-        });
-      }
-    }
-
-    class Camera {
-      constructor(scene) {
-        this.scene = scene;
-        this.bigMode = false;
-        this.isDragging = false;
-        this.previousX = 0;
-        this.previousY = 0;
-        this.rotationX = 75;
-        this.rotationZ = 0;
-        this.scale = 1;
-        this.initialDistance = 0;
-        this.initialScale = 1;
-
-        this.sceneDom = scene.dom;
-        this.sceneRect = this.sceneDom.getBoundingClientRect();
-
-        this.setScene({ x: 0, y: 0, rx: this.rotationX, rz: this.rotationZ, s: this.scale });
-      }
-
-      setScene({ x, y, rx, rz = 0, s, d = 0.5 }) {
-        this.sceneDom.style.setProperty('--offset-x', `${x}px`);
-        this.sceneDom.style.setProperty('--offset-y', `${y}px`);
-        this.sceneDom.style.setProperty('--rotate-x', `${rx}deg`);
-        this.sceneDom.style.setProperty('--rotate-z', `${rz}deg`);
-        this.sceneDom.style.setProperty('--scale', s);
-        this.sceneDom.style.transitionDuration = `${d}s`;
-        this.rotationZ = rz;
-      }
-
-      reset() {
-        this.setScene({ x: 0, y: 0, rx: this.rotationX, s: 1 });
-        this.bigMode = false;
-      }
-
-      focus(x, y, z) {
-        this.setScene({ x: x, y: y, rx: 0, s: 2 });
-        this.bigMode = true;
-      }
-
-      startDrag(event) {
-        this.isDragging = true;
-        this.previousX = event.clientX;
-        this.previousY = event.clientY;
-      }
-
-      drag(event) {
-        if (!this.isDragging || this.bigMode) return;
-
-        const deltaX = event.clientX - this.previousX;
-        const deltaY = event.clientY - this.previousY;
-
-        this.rotationZ -= deltaX * 0.5;
-        this.rotationX = Math.min(Math.max(0, this.rotationX - deltaY * 0.5), 180);
-
-        this.setScene({ x: 0, y: 0, rx: this.rotationX, rz: this.rotationZ, s: this.scale, d: 0 });
-
-        this.previousX = event.clientX;
-        this.previousY = event.clientY;
-      }
-
-      endDrag() {
-        this.isDragging = false;
-      }
-
-      zoom(event) {
-        event.preventDefault();
-
-        const delta = event.deltaY;
-        this.scale *= 1 + delta * 0.001;
-        this.scale = Math.min(Math.max(0.5, this.scale), 5);
-
-        this.setScene({ x: 0, y: 0, rx: this.rotationX, rz: this.rotationZ, s: this.scale, d: 0 });
-      }
-
-      startTouch(event) {
-        if (event.touches.length > 1) {
-          this.initialDistance = Math.hypot(
-            event.touches[0].clientX - event.touches[1].clientX,
-            event.touches[0].clientY - event.touches[1].clientY
-          );
-          this.initialScale = this.scale;
-        }
-
-        this.isDragging = true;
-        this.previousX = event.touches[0].clientX;
-        this.previousY = event.touches[0].clientY;
-      }
-
-      touchMove(event) {
-        if (!this.isDragging || this.bigMode) return;
-
-        const deltaX = event.touches[0].clientX - this.previousX;
-        const deltaY = event.touches[0].clientY - this.previousY;
-
-        this.rotationZ -= deltaX * 0.5;
-        this.rotationX = Math.min(Math.max(0, this.rotationX - deltaY * 0.5), 180);
-
-        this.setScene({ x: 0, y: 0, rx: this.rotationX, rz: this.rotationZ, s: this.scale, d: 0 });
-
-        this.previousX = event.touches[0].clientX;
-        this.previousY = event.touches[0].clientY;
-
-        if (event.touches.length === 2) {
-          const currentDistance = Math.hypot(
-            event.touches[0].clientX - event.touches[1].clientX,
-            event.touches[0].clientY - event.touches[1].clientY
-          );
-          this.scale = this.initialScale * (currentDistance / this.initialDistance);
-          this.scale = Math.min(Math.max(0.5, this.scale), 2);
-
-          this.setScene({ x: 0, y: 0, rx: this.rotationX, rz: this.rotationZ, s: this.scale, d: 0 });
-        }
-      }
-
-      endTouch() {
-        this.isDragging = false;
-      }
-    }
-
-    class Block {
-      constructor(width, height) {
-        this.models = [];
-        this.dom = document.createElement('div');
-        this.dom.className = 'table';
-        this.dom.style.setProperty('--table-w', `${width}px`);
-        this.dom.style.setProperty('--table-h', `${height}px`);
-
-        const sides = ['front', 'left', 'right', 'bottom', 'back'];
-        sides.forEach(side => {
-          const sideDom = document.createElement('div');
-          sideDom.className = `side ${side}`;
-          this.dom.appendChild(sideDom);
-        });
-
-        this.updateBoundingRect();
-      }
-
-      append(model) {
-        this.models.push(model);
-        this.dom.appendChild(model.dom);
-      }
-
-      updateBoundingRect() {
-        const rect = this.dom.getBoundingClientRect();
-        this.boundingRect = {
-          left: rect.left,
-          top: rect.top,
-          width: rect.width,
-          height: rect.height
-        };
-      }
-
-      addClickListener(callback) {
-        this.dom.addEventListener('click', callback);
-      }
-
-      removeClickListener(callback) {
-        this.dom.removeEventListener('click', callback);
-      }
-    }
-
-    class Mesh {
-      constructor(className, width, height, bottom, left) {
-        this.dom = document.createElement('div');
-        this.dom.className = className;
-        this.dom.style.position = 'absolute';
-        this.dom.style.width = `${width}px`;
-        this.dom.style.height = `${height}px`;
-        this.dom.style.bottom = `${bottom}px`;
-        this.dom.style.left = `${left}px`;
-
-        this.updateBoundingRect();
-      }
-
-      updateBoundingRect() {
-        const rect = this.dom.getBoundingClientRect();
-        this.boundingRect = {
-          left: rect.left,
-          top: rect.top,
-          width: rect.width,
-          height: rect.height
-        };
-      }
-
-      addClickListener(callback) {
-        this.dom.addEventListener('click', callback);
-      }
-
-      removeClickListener(callback) {
-        this.dom.removeEventListener('click', callback);
-      }
-    }
-
     scene = new Scene(document.getElementById('scene'));
-    const table = new Block(400, 300);
-    const wall = new Mesh('wall', 800, 600, 0, 0);
+    scene.showAxis();
+    const table = new Block({ l: 400, w: 300, h: 20 });
+    const wall = new Mesh({ l: 800, w: 600 });
     scene.append(table);
     scene.append(wall);
 
