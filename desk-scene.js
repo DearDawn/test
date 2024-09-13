@@ -55,6 +55,12 @@ export class Camera {
     this.rotationZ -= deltaX * 0.5;
     this.rotationX = Math.min(Math.max(0, this.rotationX - deltaY * 0.5), 180);
 
+    if (this.rotationZ > 180) {
+      this.rotationZ -= 360;
+    } else if (this.rotationZ < -180) {
+      this.rotationZ += 360;
+    }
+
     this.setScene({ x: 0, y: 0, rx: this.rotationX, rz: this.rotationZ, s: this.scale, d: 0 });
 
     this.previousX = event.clientX;
