@@ -34,9 +34,9 @@ export class Camera {
     this.bigMode = false;
   }
 
-  focus (x, y, z) {
+  focus (x, y, scale = 2) {
     this.previousRotationZ = this.rotationZ;
-    this.setScene({ x: -x, y: -y, rx: 0, s: 2 });
+    this.setScene({ x: -x, y: -y, rx: 0, s: scale });
     this.bigMode = true;
   }
 
@@ -76,7 +76,8 @@ export class Camera {
 
     const delta = event.deltaY;
     this.scale *= 1 + delta * 0.001;
-    this.scale = Math.min(Math.max(0.5, this.scale), 5);
+    this.scale = Math.min(Math.max(0.1, this.scale), 10);
+    document.body.style.perspective = `${1000 / this.scale}px`;
 
     this.setScene({ x: 0, y: 0, rx: this.rotationX, rz: this.rotationZ, s: this.scale, d: 0 });
   }
