@@ -56,13 +56,37 @@
 
     // 加载模型
     const loader = new THREE.GLTFLoader();
-    loader.load('./models/01.glb', function (gltf) {
+    loader.load('./models/02.glb', function (gltf) {
+      console.log('[dodo] ', 'gltf', gltf);
       gltf.scene.traverse(function (child) {
         if (child.isMesh && child.material.map) {
           child.material.map.encoding = THREE.sRGBEncoding; // 设置纹理的色彩空间为 sRGB
         }
       });
       scene.add(gltf.scene);
+
+      // 获取动画剪辑
+      const animations = gltf.animations;
+      if (animations && animations.length > 0) {
+        // 创建动画混合器
+        const mixer = new THREE.AnimationMixer(gltf.scene);
+
+        // 创建并播放所有动画动作
+        animations.forEach(clip => {
+          const action = mixer.clipAction(clip);
+          action.play();
+        });
+
+        // 在渲染循环中更新动画混合器
+        const clock = new THREE.Clock();
+        function animate () {
+          requestAnimationFrame(animate);
+          const delta = clock.getDelta();
+          mixer.update(delta);
+          renderer.render(scene, camera);
+        }
+        animate();
+      }
     }, undefined, function (error) {
       console.error(error);
     });
