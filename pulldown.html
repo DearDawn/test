@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>下拉刷新示例</title>
+  <style>
+    html,
+    body {
+      padding: 0;
+      margin: 0;
+      overflow-x: hidden;
+      overscroll-behavior: none;
+    }
+
+    body.overflowHidden {
+      overflow: hidden;
+    }
+
+    #box {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+      background-color: #eee;
+    }
+
+    .loader-box {
+      position: relative;
+      top: -80px;
+      height: 80px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    #loader {
+      width: 25px;
+      height: 25px;
+      border: 3px solid #ddd;
+      border-radius: 50%;
+      border-bottom: 3px solid #717171;
+      transform: rotate(0deg);
+    }
+
+    #loader.loading {
+      animation: loading 1s linear infinite;
+    }
+
+    @keyframes loading {
+      from {
+        transform: rotate(0deg);
+      }
+
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    h1 {
+      text-align: center;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="box">
+    <div class="loader-box">
+      <div id="loader"></div>
+    </div>
+    <h1>下拉刷新 ↓</h1>
+    <div>123123</div>
+    <div>123123</div>
+    <div>123123</div>
+    <div>123123</div>
+    <div>123123</div>
+    <div>123123</div>
+    <div>123123</div>
+    <div>123123</div>
+    <div>123123</div>
+    <div>123123</div>
+  </div>
+
+  <script>
+    const box = document.getElementById('box');
+    const body = document.body;
+    const loader = document.getElementById('loader');
+    const DISTANCE_Y_MIN_LIMIT = 80 * devicePixelRatio;
+    const Y_FACTOR = 20;
+    const DEG_LIMIT = 40;
+
+    let startY = 0, startX = 0, endY = 0, endX = 0, distanceY = 0, distanceX = 0, loadLock = false;
+
+    function start (e) {
+      if (loadLock) {
+        return;
+      }
+      startY = e.touches[0].clientY;
+      startX = e.touches[0].clientX;
+    }
+
+    function move (e) {
+      endY = e.touches[0].clientY;
+      endX = e.touches[0].clientX;
+      if (loadLock) {
+        return;
+      }
+      if (endY - startY < 0) {
+        return;
+      }
+
+      distanceY = endY - startY;
+      distanceX = endX - startX;
+
+      const deg = Math.atan(Math.abs(distanceX) / distanceY) * (180 / Math.PI);
+      if (deg > DEG_LIMIT) {
+        [startY, startX] = [endY, endX];
+        return;
+      }
+      const y = Math.log((distanceY / Y_FACTOR / devicePixelRatio) + 1) * Y_FACTOR * devicePixelRatio;
+
+      box.style = `
+          transform: translateY(${y}px);
+          transition: all 0s linear;
+        `;
+    }
+
+    function end () {
+      if (loadLock) {
+        return;
+      }
+      if (endY - startY < 0) {
+        return;
+      }
+      if (distanceY < DISTANCE_Y_MIN_LIMIT) {
+        box.style = `
+            transform: translateY(0px);
+            transition: all 0.3s linear;
+          `;
+        body.className = '';
+        return;
+      }
+      loadLock = true;
+      box.style = `
+          transform: translateY(80px);
+          transition: all 0.3s linear;
+        `;
+      loader.className = 'loading';
+      body.className = 'overflowHidden';
+
+      setTimeout(() => {
+        loadLock = false;
+        box.style = `
+            transform: translateY(0px);
+            transition: all 0.3s linear;
+          `;
+        loader.className = '';
+        body.className = '';
+      }, 1000);
+    }
+
+    function addTouchEvent () {
+      box.addEventListener('touchstart', start, { passive: false });
+      box.addEventListener('touchmove', move, { passive: false });
+      box.addEventListener('touchend', end, { passive: false });
+    }
+
+    addTouchEvent()
+  </script>
+</body>
+
+</html>

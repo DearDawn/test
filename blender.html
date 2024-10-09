@@ -56,7 +56,7 @@
 
     // 加载模型
     const loader = new THREE.GLTFLoader();
-    loader.load('./models/02.glb', function (gltf) {
+    loader.load('./models/test2.glb', function (gltf) {
       console.log('[dodo] ', 'gltf', gltf);
       gltf.scene.traverse(function (child) {
         if (child.isMesh && child.material.map) {
