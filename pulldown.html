@@ -10,12 +10,8 @@
     body {
       padding: 0;
       margin: 0;
-      overflow-x: hidden;
-      overscroll-behavior: none;
-    }
-
-    body.overflowHidden {
       overflow: hidden;
+      overscroll-behavior: none;
     }
 
     #box {
@@ -25,15 +21,19 @@
       background-color: #eee;
     }
 
-    .list {
+    #list {
       height: 100%;
-      background: #ccc;
+      background: #fff;
       overflow: auto;
+    }
+
+    #list.hidden {
+      overflow: hidden;
     }
 
     .item {
       height: 100px;
-      background: pink;
+      background: #eee;
       margin-bottom: 10px;
     }
 
@@ -47,7 +47,17 @@
       justify-content: center;
     }
 
-    #loader {
+    .loading-more {
+      height: 80px;
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+
+    #loader,
+    .loader {
       width: 25px;
       height: 25px;
       border: 3px solid #ddd;
@@ -56,7 +66,8 @@
       transform: rotate(0deg);
     }
 
-    #loader.loading {
+    #loader.loading,
+    .loader.loading {
       animation: loading 1s linear infinite;
     }
 
@@ -93,6 +104,9 @@
       <div class="item">123123</div>
       <div class="item">123123</div>
       <div class="item">123123</div>
+      <div class="loading-more">
+        <div class="loader loading"></div>
+      </div>
     </div>
   </div>
 
@@ -141,6 +155,7 @@
       }
       realY = Math.log((distanceY / Y_FACTOR / devicePixelRatio) + 1) * Y_FACTOR * devicePixelRatio;
 
+      list.className = 'hidden';
       box.style = `
           transform: translateY(${realY}px);
           transition: all 0s linear;
@@ -159,6 +174,7 @@
             transform: translateY(0px);
             transition: all 0.3s linear;
           `;
+        list.className = '';
         body.className = '';
         return;
       }
@@ -169,6 +185,7 @@
         `;
       loader.className = 'loading';
       body.className = 'overflowHidden';
+      list.className = 'hidden';
 
       setTimeout(() => {
         loadLock = false;
@@ -177,6 +194,7 @@
             transition: all 0.3s linear;
           `;
         loader.className = '';
+        list.className = '';
         body.className = '';
       }, 1000);
     }
