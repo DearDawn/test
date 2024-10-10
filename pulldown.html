@@ -25,10 +25,23 @@
       background-color: #eee;
     }
 
+    .list {
+      height: 100%;
+      background: #ccc;
+      overflow: auto;
+    }
+
+    .item {
+      height: 100px;
+      background: pink;
+      margin-bottom: 10px;
+    }
+
     .loader-box {
       position: relative;
       top: -80px;
       height: 80px;
+      margin-bottom: -80px;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -68,28 +81,31 @@
     <div class="loader-box">
       <div id="loader"></div>
     </div>
-    <h1>下拉刷新 ↓</h1>
-    <div>123123</div>
-    <div>123123</div>
-    <div>123123</div>
-    <div>123123</div>
-    <div>123123</div>
-    <div>123123</div>
-    <div>123123</div>
-    <div>123123</div>
-    <div>123123</div>
-    <div>123123</div>
+    <div id="list" class="list">
+      <h1>下拉刷新 ↓</h1>
+      <div class="item">123123</div>
+      <div class="item">123123</div>
+      <div class="item">123123</div>
+      <div class="item">123123</div>
+      <div class="item">123123</div>
+      <div class="item">123123</div>
+      <div class="item">123123</div>
+      <div class="item">123123</div>
+      <div class="item">123123</div>
+      <div class="item">123123</div>
+    </div>
   </div>
 
   <script>
     const box = document.getElementById('box');
+    const list = document.getElementById('list');
     const body = document.body;
     const loader = document.getElementById('loader');
-    const DISTANCE_Y_MIN_LIMIT = 80 * devicePixelRatio;
+    const DISTANCE_Y_MIN_LIMIT = 40 * devicePixelRatio;
     const Y_FACTOR = 20;
     const DEG_LIMIT = 40;
 
-    let startY = 0, startX = 0, endY = 0, endX = 0, distanceY = 0, distanceX = 0, loadLock = false;
+    let startY = 0, startX = 0, endY = 0, endX = 0, distanceY = 0, distanceX = 0, loadLock = false, realY = 0;
 
     function start (e) {
       if (loadLock) {
@@ -109,6 +125,12 @@
         return;
       }
 
+      if (list.scrollTop > 0) {
+        [startY, startX] = [endY, endX];
+        realY = 0;
+        return;
+      }
+
       distanceY = endY - startY;
       distanceX = endX - startX;
 
@@ -117,10 +139,10 @@
         [startY, startX] = [endY, endX];
         return;
       }
-      const y = Math.log((distanceY / Y_FACTOR / devicePixelRatio) + 1) * Y_FACTOR * devicePixelRatio;
+      realY = Math.log((distanceY / Y_FACTOR / devicePixelRatio) + 1) * Y_FACTOR * devicePixelRatio;
 
       box.style = `
-          transform: translateY(${y}px);
+          transform: translateY(${realY}px);
           transition: all 0s linear;
         `;
     }
@@ -132,7 +154,7 @@
       if (endY - startY < 0) {
         return;
       }
-      if (distanceY < DISTANCE_Y_MIN_LIMIT) {
+      if (realY < DISTANCE_Y_MIN_LIMIT) {
         box.style = `
             transform: translateY(0px);
             transition: all 0.3s linear;
@@ -142,7 +164,7 @@
       }
       loadLock = true;
       box.style = `
-          transform: translateY(80px);
+          transform: translateY(${DISTANCE_Y_MIN_LIMIT}px);
           transition: all 0.3s linear;
         `;
       loader.className = 'loading';
