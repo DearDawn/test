@@ -2,7 +2,7 @@
 
 PROJECT_NAME=$1
 PROJECT_PATH=$2
-DIST_PATH='./*'
+DIST_PATH='.'
 
 if [[ -z $PROJECT_NAME || ! -d $PROJECT_PATH ]]; then
   echo "params empty"
@@ -17,7 +17,7 @@ if [[ $? != 0 ]]; then
 fi
 
 PUBLIC_PATH=$PROJECT_PATH$PROJECT_NAME
-echo "start moving" $DIST_PATH $PUBLIC_PATH
+echo "start moving" $PUBLIC_PATH
 
 if [[ -d $PROJECT_PATH && $PROJECT_NAME ]]; then
   rm -rf $PUBLIC_PATH
