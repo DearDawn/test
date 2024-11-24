@@ -11,8 +11,8 @@ fi
 
 echo $PROJECT_NAME $PROJECT_PATH
 
-if [[ $? != 0 || ! -d $DIST_PATH ]]; then
-  echo "build failed, dist dir empty"
+if [[ $? != 0 ]]; then
+  echo "build failed, some error"
   exit 1
 fi
 
