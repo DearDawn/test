@@ -2,7 +2,7 @@
 
 PROJECT_NAME=$1
 PROJECT_PATH=$2
-DIST_PATH='.'
+DIST_PATH='./*'
 
 if [[ -z $PROJECT_NAME || ! -d $PROJECT_PATH ]]; then
   echo "params empty"
