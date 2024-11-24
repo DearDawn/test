@@ -54,6 +54,7 @@
       align-items: center;
       justify-content: center;
       position: relative;
+      background: pink;
     }
 
     #loader,
@@ -104,7 +105,7 @@
       <div class="item">123123</div>
       <div class="item">123123</div>
       <div class="item">123123</div>
-      <div class="loading-more">
+      <div class="loading-more" id="bottom-loader">
         <div class="loader loading"></div>
       </div>
     </div>
@@ -115,6 +116,7 @@
     const list = document.getElementById('list');
     const body = document.body;
     const loader = document.getElementById('loader');
+    const bottomLoader = document.getElementById('bottom-loader');
     const DISTANCE_Y_MIN_LIMIT = 40 * devicePixelRatio;
     const Y_FACTOR = 20;
     const DEG_LIMIT = 40;
@@ -135,8 +137,9 @@
       if (loadLock) {
         return;
       }
+
       if (endY - startY < 0) {
-        return;
+        list.className = '';
       }
 
       if (list.scrollTop > 0) {
@@ -153,9 +156,12 @@
         [startY, startX] = [endY, endX];
         return;
       }
-      realY = Math.log((distanceY / Y_FACTOR / devicePixelRatio) + 1) * Y_FACTOR * devicePixelRatio;
+      realY = Math.max(Math.log((distanceY / Y_FACTOR / devicePixelRatio) + 1) * Y_FACTOR * devicePixelRatio, 0);
 
-      list.className = 'hidden';
+      if (realY > 0) {
+        list.className = 'hidden';
+      }
+
       box.style = `
           transform: translateY(${realY}px);
           transition: all 0s linear;
@@ -203,9 +209,45 @@
       box.addEventListener('touchstart', start, { passive: false });
       box.addEventListener('touchmove', move, { passive: false });
       box.addEventListener('touchend', end, { passive: false });
+      box.addEventListener('touchcancel', end, { passive: false });
     }
 
-    addTouchEvent()
+    addTouchEvent();
+
+
+    let currentIndex = 0;
+    // 创建 IntersectionObserver 实例
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        // 如果加载指示器进入视窗
+        if (entry.isIntersecting) {
+          loadMore();
+        }
+      });
+    }, { root: list, rootMargin: '0px 0px 200px 0px' });
+
+    // 开始观察加载指示器
+    observer.observe(bottomLoader);
+
+    // 加载更多内容
+    function loadMore () {
+      // 每次加载3个项目
+      for (let i = 0; i < 3; i++) {
+        if (currentIndex < 20) {
+          console.log('[dodo] ', 'pppp');
+          const item = document.createElement('div');
+          item.className = 'item';
+          item.textContent = Math.random();
+          list.insertBefore(item, bottomLoader); // 插入到加载指示器之前
+          currentIndex++;
+        } else {
+          // 如果没有更多数据，移除加载指示器
+          bottomLoader.style.display = 'none';
+          observer.unobserve(bottomLoader); // 停止观察
+          break;
+        }
+      }
+    }
   </script>
 </body>
 

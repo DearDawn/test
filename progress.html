@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>进度条</title>
+  <style>
+    .line {
+      width: 100%;
+      max-width: 1200px;
+      display: flex;
+      align-items: center;
+      padding: 0 10px;
+      box-sizing: border-box;
+      margin: auto;
+    }
+
+    h2 {
+      text-align: center;
+    }
+
+    label {
+      width: 120px;
+      flex: none;
+    }
+
+    progress {
+      flex: 1;
+      height: 30px;
+    }
+
+    .percent {
+      margin-left: 10px;
+      width: 70px;
+      text-align: right;
+    }
+
+    details {
+      margin-bottom: 10px;
+    }
+
+    summary {
+      text-align: center;
+    }
+
+    .settings {
+      margin: 10px auto 0;
+      width: fit-content;
+    }
+  </style>
+</head>
+
+<body>
+  <h2>进度条 (<span id="status"></span>)</h2>
+  <details>
+    <summary>设置时间</summary>
+    <div class="settings">
+      开始 <input id="date-start" type="datetime-local" onchange="handleDateStartChange(this)" />
+      上班 <input id="start-time" type="time" onchange="handleStartTimeChange(this)" />
+      下班 <input id="end-time" type="time" onchange="handleEndTimeChange(this)" />
+      假期 <input id="date-end" type="datetime-local" onchange="handleHolidayTimeChange(this)" />
+      <div>
+  </details>
+  <div id="container"></div>
+  <script>
+    const containerDom = document.getElementById("container");
+    const statusDom = document.getElementById("status");
+    const startDom = document.getElementById("start-time");
+    const endDom = document.getElementById("end-time");
+    const startDateDom = document.getElementById("date-start");
+    const endDateDom = document.getElementById("date-end");
+
+    let renderTimer = null;
+    let timeNow = new Date().getTime();
+    let timeStart = new Date().setHours(10, 0, 0, 0);
+    let timeEnd = new Date().setHours(22, 30, 0, 0);
+    let timeLunch = new Date().setHours(12, 0, 0, 0);
+    let timeDinner = new Date().setHours(18, 0, 0, 0);
+    let dateStart = new Date('2024-11-24 10:00:00').getTime();
+    let dateEnd = new Date('2024-12-06 21:00:00').getTime();
+
+    let daySpan, isOffWork, dateHolidayStart, holidaySpan;
+
+    const initTime = () => {
+      daySpan = timeEnd - timeStart;
+      isOffWork = timeNow > timeEnd && timeNow < timeStart;
+      dateHolidayStart = new Date(dateEnd).setHours(new Date(timeStart).getHours());
+      holidaySpan = Math.max(dateEnd - dateHolidayStart, 0);
+    };
+
+    function handleStartTimeChange (target) {
+      const hour = Number(target.value.split(':')[0]);
+      const min = Number(target.value.split(':')[1]);
+
+      timeStart = new Date().setHours(hour, min, 0, 0);
+      initTime();
+      updateRender();
+    };
+
+    const handleEndTimeChange = (target) => {
+      const hour = Number(target.value.split(':')[0]);
+      const min = Number(target.value.split(':')[1]);
+
+      timeEnd = new Date().setHours(hour, min, 0, 0);
+      initTime();
+      updateRender();
+    };
+
+    const handleHolidayTimeChange = (target) => {
+      const date = new Date(target.value);
+      dateEnd = date.getTime();
+      initTime();
+      updateRender();
+    };
+
+    const handleDateStartChange = (target) => {
+      const date = new Date(target.value);
+      dateStart = date.getTime();
+      initTime();
+      updateRender();
+    };
+
+    const formatHolidayDate = (_date, detail = false) => {
+      const date = new Date(_date);
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, '0');
+      const day = String(date.getDate()).padStart(2, '0');
+      const hour = String(date.getHours()).padStart(2, '0');
+      const min = String(date.getMinutes()).padStart(2, '0');
+      const second = String(date.getSeconds()).padStart(2, '0');
+
+      if (detail) {
+        return `${year}-${month}-${day} ${hour}:${min}:${second}`;
+      }
+
+      return `${month}-${day}`;
+    };
+
+    const formatDate = (_date) => {
+      const date = new Date(_date);
+      const hour = String(date.getHours()).padStart(2, '0');
+      const min = String(date.getMinutes()).padStart(2, '0');
+
+      return `${hour}:${min}`;
+    };
+
+    const getHolidayPercent = (start, end) => {
+      const passDay = Math.floor((timeNow - start) / (1000 * 60 * 60 * 24));
+      const totalDay = Math.floor((end - start) / (1000 * 60 * 60 * 24));
+
+      const progress = Math.floor(((timeNow - timeStart) + passDay * daySpan) / (daySpan * totalDay + holidaySpan) * 100000) / 1000;
+
+      return Math.max(0, Math.min(100, progress));
+    };
+
+    const getPercent = (start, end) => {
+      // 保留两位小数
+      const progress = Math.floor((timeNow - start) / (end - start) * 100000) / 1000;
+
+      return Math.max(0, Math.min(100, progress));
+    };
+
+    const updateRender = () => {
+      timeNow = Math.min(Math.max(new Date().getTime(), timeStart), timeEnd);
+
+      statusDom.innerHTML = `${isOffWork ? '下班啦' : '打工中...'}`;
+
+      containerDom.innerHTML = `
+      <div class="line">
+        <label>午饭（${formatDate(timeLunch)}）</label>
+        <progress max="100" value="${getPercent(timeStart, timeLunch)}"></progress>
+        <span class="percent">${getPercent(timeStart, timeLunch)}%</span>
+      </div>
+      <div class="line">
+        <label>晚饭（${formatDate(timeDinner)}）</label>
+        <progress max="100" value="${getPercent(timeStart, timeDinner)}"></progress>
+        <span class="percent">${getPercent(timeStart, timeDinner)}%</span>
+      </div>
+      <div class="line">
+        <label>下班（${formatDate(timeEnd)}）</label>
+        <progress max="100" value="${getPercent(timeStart, timeEnd)}"></progress>
+        <span class="percent">${getPercent(timeStart, timeEnd)}%</span>
+      </div>
+      <div class="line">
+        <label>假期（${formatHolidayDate(dateEnd)}）</label>
+        <progress max="100" value="${getHolidayPercent(dateStart, dateEnd)}"></progress>
+        <span class="percent">${getHolidayPercent(dateStart, dateEnd)}%</span>
+      </div>
+      `;
+    };
+
+    initTime();
+    startDom.value = formatDate(timeStart);
+    endDom.value = formatDate(timeEnd);
+    startDateDom.value = formatHolidayDate(dateStart, true);
+    endDateDom.value = formatHolidayDate(dateEnd, true);
+
+    updateRender();
+
+    renderTimer = setInterval(() => {
+      updateRender();
+    }, 1000);
+
+    window.onbeforeunload = () => {
+      clearInterval(renderTimer);
+    };
+
+  </script>
+</body>
+
+</html>
