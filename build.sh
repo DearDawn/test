@@ -21,6 +21,7 @@ echo "start moving" $PUBLIC_PATH
 
 if [[ -d $PROJECT_PATH && $PROJECT_NAME ]]; then
   rm -rf $PUBLIC_PATH
+  mkdir $PUBLIC_PATH
 fi
 
 mv $DIST_PATH $PUBLIC_PATH
