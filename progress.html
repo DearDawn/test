@@ -77,6 +77,7 @@
     let timeEnd = new Date().setHours(22, 30, 0, 0);
     let timeLunch = new Date().setHours(12, 0, 0, 0);
     let timeDinner = new Date().setHours(18, 0, 0, 0);
+    let timeNightSnack = new Date().setHours(22, 0, 0, 0);
     let dateStart = new Date('2024-11-24 10:00:00').getTime();
     let dateEnd = new Date('2024-12-06 21:00:00').getTime();
 
@@ -176,6 +177,11 @@
         <label>晚饭（${formatDate(timeDinner)}）</label>
         <progress max="100" value="${getPercent(timeStart, timeDinner)}"></progress>
         <span class="percent">${getPercent(timeStart, timeDinner)}%</span>
+      </div>
+      <div class="line">
+        <label>夜宵（${formatDate(timeNightSnack)}）</label>
+        <progress max="100" value="${getPercent(timeStart, timeNightSnack)}"></progress>
+        <span class="percent">${getPercent(timeStart, timeNightSnack)}%</span>
       </div>
       <div class="line">
         <label>下班（${formatDate(timeEnd)}）</label>
