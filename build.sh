@@ -17,10 +17,10 @@ if [[ $? != 0 || ! -d $DIST_PATH ]]; then
 fi
 
 PUBLIC_PATH=$PROJECT_PATH$PROJECT_NAME
-echo "start moving" $PUBLIC_PATH
+echo "start moving" $DIST_PATH $PUBLIC_PATH
 
 if [[ -d $PROJECT_PATH && $PROJECT_NAME ]]; then
   rm -rf $PUBLIC_PATH
 fi
 
-mv $DIST_PATH $PROJECT_PATH$PROJECT_NAME
+mv $DIST_PATH $PUBLIC_PATH
