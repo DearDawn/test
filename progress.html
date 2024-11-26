@@ -16,6 +16,10 @@
       margin: auto;
     }
 
+    .line.done progress {
+      accent-color: limegreen;
+    }
+
     h2 {
       text-align: center;
     }
@@ -194,6 +198,9 @@
     };
 
     const render = ({ dom, label, progress }) => {
+      if (progress === 100) {
+        dom.classList.add('done');
+      }
       dom.getElementsByTagName('label')[0].innerText = label;
       dom.getElementsByTagName('progress')[0].value = progress;
       dom.getElementsByClassName('percent')[0].innerText = `${progress}%`;
