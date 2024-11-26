@@ -52,6 +52,13 @@
       margin: 10px auto 0;
       width: fit-content;
     }
+
+    #clock {
+      margin: 20px auto 0;
+      width: fit-content;
+      font-size: 48px;
+      font-weight: bold;
+    }
   </style>
 </head>
 
@@ -92,7 +99,18 @@
       <progress max="100"></progress>
       <span class="percent"></span>
     </div>
+    <div id="clock"></div>
   </div>
+  <script>
+    function updateClock () {
+      const now = new Date();
+      const hours = String(now.getHours()).padStart(2, '0');
+      const minutes = String(now.getMinutes()).padStart(2, '0');
+      const seconds = String(now.getSeconds()).padStart(2, '0');
+      const timeString = `${hours}:${minutes}:${seconds}`;
+      document.getElementById('clock').textContent = timeString;
+    }
+  </script>
   <script>
     const containerDom = document.getElementById("container");
     const statusDom = document.getElementById("status");
@@ -220,6 +238,7 @@
     };
 
     const updateRender = () => {
+      setInterval(updateClock, 1000);
       timeNow = Math.min(Math.max(new Date().getTime(), timeStart), timeEnd);
 
       statusDom.innerHTML = `${isOffWork ? '下班啦' : '打工中...'}`;
