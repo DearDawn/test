@@ -62,7 +62,33 @@
       假期 <input id="date-end" type="datetime-local" onchange="handleHolidayTimeChange(this)" />
       <div>
   </details>
-  <div id="container"></div>
+  <div id="container">
+    <div id="lunch" class="line">
+      <label></label>
+      <progress max="100"></progress>
+      <span class="percent"></span>
+    </div>
+    <div id="dinner" class="line">
+      <label></label>
+      <progress max="100"></progress>
+      <span class="percent"></span>
+    </div>
+    <div id="nightSnack" class="line">
+      <label></label>
+      <progress max="100"></progress>
+      <span class="percent"></span>
+    </div>
+    <div id="off" class="line">
+      <label></label>
+      <progress max="100"></progress>
+      <span class="percent"></span>
+    </div>
+    <div id="holidayEnd" class="line">
+      <label></label>
+      <progress max="100"></progress>
+      <span class="percent"></span>
+    </div>
+  </div>
   <script>
     const containerDom = document.getElementById("container");
     const statusDom = document.getElementById("status");
@@ -70,6 +96,11 @@
     const endDom = document.getElementById("end-time");
     const startDateDom = document.getElementById("date-start");
     const endDateDom = document.getElementById("date-end");
+    const lunchDom = document.getElementById("lunch");
+    const dinnerDom = document.getElementById("dinner");
+    const nightSnackDom = document.getElementById("nightSnack");
+    const off = document.getElementById("off");
+    const dateEndDom = document.getElementById("holidayEnd");
 
     let renderTimer = null;
     let timeNow = new Date().getTime();
@@ -162,38 +193,42 @@
       return Math.max(0, Math.min(100, progress));
     };
 
+    const render = ({ dom, label, progress }) => {
+      dom.getElementsByTagName('label')[0].innerText = label;
+      dom.getElementsByTagName('progress')[0].value = progress;
+      dom.getElementsByClassName('percent')[0].innerText = `${progress}%`;
+    };
+
     const updateRender = () => {
       timeNow = Math.min(Math.max(new Date().getTime(), timeStart), timeEnd);
 
       statusDom.innerHTML = `${isOffWork ? '下班啦' : '打工中...'}`;
 
-      containerDom.innerHTML = `
-      <div class="line">
-        <label>午饭（${formatDate(timeLunch)}）</label>
-        <progress max="100" value="${getPercent(timeStart, timeLunch)}"></progress>
-        <span class="percent">${getPercent(timeStart, timeLunch)}%</span>
-      </div>
-      <div class="line">
-        <label>晚饭（${formatDate(timeDinner)}）</label>
-        <progress max="100" value="${getPercent(timeStart, timeDinner)}"></progress>
-        <span class="percent">${getPercent(timeStart, timeDinner)}%</span>
-      </div>
-      <div class="line">
-        <label>夜宵（${formatDate(timeNightSnack)}）</label>
-        <progress max="100" value="${getPercent(timeStart, timeNightSnack)}"></progress>
-        <span class="percent">${getPercent(timeStart, timeNightSnack)}%</span>
-      </div>
-      <div class="line">
-        <label>下班（${formatDate(timeEnd)}）</label>
-        <progress max="100" value="${getPercent(timeStart, timeEnd)}"></progress>
-        <span class="percent">${getPercent(timeStart, timeEnd)}%</span>
-      </div>
-      <div class="line">
-        <label>假期（${formatHolidayDate(dateEnd)}）</label>
-        <progress max="100" value="${getHolidayPercent(dateStart, dateEnd)}"></progress>
-        <span class="percent">${getHolidayPercent(dateStart, dateEnd)}%</span>
-      </div>
-      `;
+      render({
+        dom: lunchDom,
+        label: `午饭（${formatDate(timeLunch)}）`,
+        progress: getPercent(timeStart, timeLunch),
+      });
+      render({
+        dom: dinnerDom,
+        label: `晚饭（${formatDate(timeDinner)}）`,
+        progress: getPercent(timeStart, timeDinner),
+      });
+      render({
+        dom: nightSnackDom,
+        label: `夜宵（${formatDate(timeNightSnack)}）`,
+        progress: getPercent(timeStart, timeNightSnack),
+      });
+      render({
+        dom: off,
+        label: `下班（${formatDate(timeEnd)}）`,
+        progress: getPercent(timeStart, timeEnd),
+      });
+      render({
+        dom: dateEndDom,
+        label: `假期（${formatHolidayDate(dateEnd)}）`,
+        progress: getHolidayPercent(dateStart, dateEnd),
+      });
     };
 
     initTime();
