@@ -238,7 +238,7 @@
     };
 
     const updateRender = () => {
-      setInterval(updateClock, 1000);
+      updateClock();
       timeNow = Math.min(Math.max(new Date().getTime(), timeStart), timeEnd);
 
       statusDom.innerHTML = `${isOffWork ? '下班啦' : '打工中...'}`;
