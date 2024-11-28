@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>随机头像生成器</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+        }
+        canvas {
+            border-radius: 50%;
+            background-color: #ffcc99;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="avatar" width="200" height="200"></canvas>
+    <button onclick="generateAvatar()">生成新头像</button>
+
+    <script>
+        const canvas = document.getElementById('avatar');
+        const ctx = canvas.getContext('2d');
+
+        function getRandomInt(min, max) {
+            return Math.floor(Math.random() * (max - min + 1)) + min;
+        }
+
+        function getRandomColor() {
+            const letters = '0123456789ABCDEF';
+            let color = '#';
+            for (let i = 0; i < 6; i++) {
+                color += letters[Math.floor(Math.random() * 16)];
+            }
+            return color;
+        }
+
+        function drawRandomFace() {
+            const faceColor = getRandomColor();
+            const faceWidth = getRandomInt(100, 160);
+            const faceHeight = getRandomInt(100, 160);
+            const faceX = (canvas.width - faceWidth) / 2;
+            const faceY = (canvas.height - faceHeight) / 2;
+
+            ctx.beginPath();
+            ctx.ellipse(faceX + faceWidth / 2, faceY + faceHeight / 2, faceWidth / 2, faceHeight / 2, 0, 0, Math.PI * 2);
+            ctx.fillStyle = faceColor;
+            ctx.fill();
+        }
+
+        function drawRandomHair() {
+            const hairColor = getRandomColor();
+            const hairHeight = getRandomInt(10, 40);
+            const hairX = 0;
+            const hairY = 0;
+
+            ctx.beginPath();
+            ctx.rect(hairX, hairY, canvas.width, hairHeight);
+            ctx.fillStyle = hairColor;
+            ctx.fill();
+        }
+
+        function drawRandomEyes() {
+            const eyeColor = getRandomColor();
+            const eyeRadius = getRandomInt(5, 15);
+            const eyeSpacing = getRandomInt(20, 50);
+            const eyeY = getRandomInt(50, 80);
+
+            ctx.beginPath();
+            ctx.arc(canvas.width / 2 - eyeSpacing / 2, eyeY, eyeRadius, 0, Math.PI * 2);
+            ctx.arc(canvas.width / 2 + eyeSpacing / 2, eyeY, eyeRadius, 0, Math.PI * 2);
+            ctx.fillStyle = eyeColor;
+            ctx.fill();
+        }
+
+        function drawRandomNose() {
+            const noseColor = getRandomColor();
+            const noseWidth = getRandomInt(5, 15);
+            const noseHeight = getRandomInt(5, 15);
+            const noseX = canvas.width / 2 - noseWidth / 2;
+            const noseY = getRandomInt(80, 120);
+
+            ctx.beginPath();
+            ctx.rect(noseX, noseY, noseWidth, noseHeight);
+            ctx.fillStyle = noseColor;
+            ctx.fill();
+        }
+
+        function drawRandomMouth() {
+            const mouthColor = getRandomColor();
+            const mouthWidth = getRandomInt(20, 60);
+            const mouthHeight = getRandomInt(5, 15);
+            const mouthX = (canvas.width - mouthWidth) / 2;
+            const mouthY = getRandomInt(120, 150);
+
+            ctx.beginPath();
+            ctx.rect(mouthX, mouthY, mouthWidth, mouthHeight);
+            ctx.fillStyle = mouthColor;
+            ctx.fill();
+        }
+
+        function generateAvatar() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            drawRandomFace();
+            drawRandomHair();
+            drawRandomEyes();
+            drawRandomNose();
+            drawRandomMouth();
+        }
+
+        // 初始生成头像
+        generateAvatar();
+    </script>
+</body>
+</html>

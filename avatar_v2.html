@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>随机头像生成器</title>
+  <style>
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      background-color: #f0f0f0;
+    }
+
+    canvas {
+      border-radius: 50%;
+      background-color: #ffcc99;
+    }
+  </style>
+</head>
+
+<body>
+  <canvas id="avatar" width="200" height="200"></canvas>
+  <button onclick="generateAvatar()">生成新头像</button>
+
+  <script>
+    const canvas = document.getElementById('avatar');
+    const ctx = canvas.getContext('2d');
+
+    const faceShapes = [
+      'circle',
+      'square',
+      'oval',
+      'heart',
+      'diamond'
+    ];
+
+    const hairStyles = [
+      'short',
+      'long',
+      'bald',
+      'curly',
+      'straight'
+    ];
+
+    const eyeStyles = [
+      'round',
+      'oval',
+      'slanted',
+      'cat-eye'
+    ];
+
+    const noseStyles = [
+      'small',
+      'medium',
+      'large',
+      'button'
+    ];
+
+    const mouthStyles = [
+      'smile',
+      'frown',
+      'neutral',
+      'surprised'
+    ];
+
+    function getRandomElement (array) {
+      return array[Math.floor(Math.random() * array.length)];
+    }
+
+    function drawFace (shape) {
+      ctx.beginPath();
+      switch (shape) {
+        case 'circle':
+          ctx.arc(100, 100, 80, 0, Math.PI * 2);
+          break;
+        case 'square':
+          ctx.rect(20, 20, 160, 160);
+          break;
+        case 'oval':
+          ctx.ellipse(100, 100, 80, 60, 0, 0, Math.PI * 2);
+          break;
+        case 'heart':
+          ctx.moveTo(100, 150);
+          ctx.bezierCurveTo(100, 120, 150, 70, 100, 20);
+          ctx.bezierCurveTo(50, 70, 100, 120, 100, 150);
+          break;
+        case 'diamond':
+          ctx.moveTo(100, 20);
+          ctx.lineTo(180, 100);
+          ctx.lineTo(100, 180);
+          ctx.lineTo(20, 100);
+          ctx.closePath();
+          break;
+      }
+      ctx.fillStyle = '#ffcc99';
+      ctx.fill();
+    }
+
+    function drawHair (style) {
+      ctx.beginPath();
+      switch (style) {
+        case 'short':
+          ctx.rect(20, 20, 160, 20);
+          break;
+        case 'long':
+          ctx.rect(20, 20, 160, 30);
+          break;
+        case 'bald':
+          return;
+        case 'curly':
+          ctx.arc(100, 30, 60, 0, Math.PI, true);
+          break;
+        case 'straight':
+          ctx.rect(20, 20, 160, 20);
+          break;
+      }
+      ctx.fillStyle = '#000';
+      ctx.fill();
+    }
+
+    function drawEyes (style) {
+      ctx.beginPath();
+      switch (style) {
+        case 'round':
+          ctx.arc(60, 70, 10, 0, Math.PI * 2);
+          ctx.arc(140, 70, 10, 0, Math.PI * 2);
+          break;
+        case 'oval':
+          ctx.ellipse(60, 70, 10, 15, 0, 0, Math.PI * 2);
+          ctx.ellipse(140, 70, 10, 15, 0, 0, Math.PI * 2);
+          break;
+        case 'slanted':
+          ctx.moveTo(50, 60);
+          ctx.lineTo(70, 80);
+          ctx.lineTo(50, 80);
+          ctx.closePath();
+          ctx.moveTo(130, 60);
+          ctx.lineTo(150, 80);
+          ctx.lineTo(130, 80);
+          ctx.closePath();
+          break;
+        case 'cat-eye':
+          ctx.arc(60, 70, 10, 0, Math.PI, true);
+          ctx.arc(140, 70, 10, 0, Math.PI, true);
+          break;
+      }
+      ctx.fillStyle = '#000';
+      ctx.fill();
+    }
+
+    function drawNose (style) {
+      ctx.beginPath();
+      switch (style) {
+        case 'small':
+          ctx.arc(100, 100, 5, 0, Math.PI * 2);
+          break;
+        case 'medium':
+          ctx.arc(100, 100, 8, 0, Math.PI * 2);
+          break;
+        case 'large':
+          ctx.arc(100, 100, 12, 0, Math.PI * 2);
+          break;
+        case 'button':
+          ctx.arc(100, 100, 5, 0, Math.PI * 2);
+          break;
+      }
+      ctx.fillStyle = '#000';
+      ctx.fill();
+    }
+
+    function drawMouth (style) {
+      ctx.beginPath();
+      switch (style) {
+        case 'smile':
+          ctx.arc(100, 130, 20, 0, Math.PI);
+          break;
+        case 'frown':
+          ctx.arc(100, 150, 20, Math.PI, 0);
+          break;
+        case 'neutral':
+          ctx.rect(80, 130, 40, 5);
+          break;
+        case 'surprised':
+          ctx.arc(100, 130, 15, 0, Math.PI * 2);
+          break;
+      }
+      ctx.fillStyle = '#000';
+      ctx.fill();
+    }
+
+    function generateAvatar () {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      const faceShape = getRandomElement(faceShapes);
+      const hairStyle = getRandomElement(hairStyles);
+      const eyeStyle = getRandomElement(eyeStyles);
+      const noseStyle = getRandomElement(noseStyles);
+      const mouthStyle = getRandomElement(mouthStyles);
+
+      drawFace(faceShape);
+      drawHair(hairStyle);
+      drawEyes(eyeStyle);
+      drawNose(noseStyle);
+      drawMouth(mouthStyle);
+    }
+
+    // 初始生成头像
+    generateAvatar();
+  </script>
+</body>
+
+</html>

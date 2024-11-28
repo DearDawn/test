@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>随机头像生成器</title>
+  <style>
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      background-color: #f0f0f0;
+    }
+
+    #avatar {
+      width: 200px;
+      height: 200px;
+      background-color: #ffcc99;
+      border-radius: 50%;
+      position: relative;
+    }
+
+    .feature {
+      position: absolute;
+    }
+
+    /* 脸形样式 */
+    .face.circle {
+      border-radius: 50%;
+    }
+
+    .face.square {
+      border-radius: 10%;
+    }
+
+    .face.oval {
+      border-radius: 50%/60%;
+    }
+
+    .face.heart {
+      border-radius: 50% 50% 50% 0;
+    }
+
+    .face.diamond {
+      transform: rotate(45deg);
+      border-radius: 10%;
+    }
+
+    /* 发型样式 */
+    .hair.short {
+      height: 20%;
+      background-color: #000;
+    }
+
+    .hair.long {
+      height: 30%;
+      background-color: #000;
+    }
+
+    .hair.bald {
+      height: 0;
+    }
+
+    .hair.curly {
+      height: 25%;
+      background-color: #000;
+      border-radius: 50%;
+    }
+
+    .hair.straight {
+      height: 20%;
+      background-color: #000;
+    }
+
+    /* 眼睛样式 */
+    .eyes.round .eye {
+      border-radius: 50%;
+    }
+
+    .eyes.oval .eye {
+      border-radius: 50%/60%;
+    }
+
+    .eyes.slanted .eye {
+      transform: rotate(45deg);
+      border-radius: 50%;
+    }
+
+    .eyes.cat-eye .eye {
+      border-radius: 50% 50% 0 0;
+    }
+
+    /* 鼻子样式 */
+    .nose.small {
+      width: 10%;
+      height: 10%;
+      background-color: #000;
+      border-radius: 50%;
+    }
+
+    .nose.medium {
+      width: 15%;
+      height: 15%;
+      background-color: #000;
+      border-radius: 50%;
+    }
+
+    .nose.large {
+      width: 20%;
+      height: 20%;
+      background-color: #000;
+      border-radius: 50%;
+    }
+
+    .nose.button {
+      width: 10%;
+      height: 10%;
+      background-color: #000;
+      border-radius: 50%;
+    }
+
+    /* 嘴巴样式 */
+    .mouth.smile {
+      width: 30%;
+      height: 10%;
+      background-color: #000;
+      border-radius: 50% 50% 50% 50%/100% 100% 0 0;
+    }
+
+    .mouth.frown {
+      width: 30%;
+      height: 10%;
+      background-color: #000;
+      border-radius: 50% 50% 50% 50%/0 0 100% 100%;
+    }
+
+    .mouth.neutral {
+      width: 30%;
+      height: 5%;
+      background-color: #000;
+      border-radius: 50%;
+    }
+
+    .mouth.surprised {
+      width: 20%;
+      height: 20%;
+      background-color: #000;
+      border-radius: 50%;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="avatar"></div>
+  <button onclick="generateAvatar()">生成新头像</button>
+
+  <script>
+    const faceShapes = [
+      'circle',
+      'square',
+      'oval',
+      'heart',
+      'diamond'
+    ];
+
+    const hairStyles = [
+      'short',
+      'long',
+      'bald',
+      'curly',
+      'straight'
+    ];
+
+    const eyeStyles = [
+      'round',
+      'oval',
+      'slanted',
+      'cat-eye'
+    ];
+
+    const noseStyles = [
+      'small',
+      'medium',
+      'large',
+      'button'
+    ];
+
+    const mouthStyles = [
+      'smile',
+      'frown',
+      'neutral',
+      'surprised'
+    ];
+
+    function getRandomElement (array) {
+      return array[Math.floor(Math.random() * array.length)];
+    }
+
+    function generateAvatar () {
+      const avatar = document.getElementById('avatar');
+      avatar.innerHTML = '';
+
+      const faceShape = getRandomElement(faceShapes);
+      const hairStyle = getRandomElement(hairStyles);
+      const eyeStyle = getRandomElement(eyeStyles);
+      const noseStyle = getRandomElement(noseStyles);
+      const mouthStyle = getRandomElement(mouthStyles);
+
+      // 脸形
+      const face = document.createElement('div');
+      face.className = 'feature face ' + faceShape;
+      face.style.width = '100%';
+      face.style.height = '100%';
+      face.style.borderRadius = '50%';
+      avatar.appendChild(face);
+
+      // 发型
+      const hair = document.createElement('div');
+      hair.className = 'feature hair ' + hairStyle;
+      hair.style.width = '100%';
+      hair.style.top = '0';
+      avatar.appendChild(hair);
+
+      // 眼睛
+      const eyes = document.createElement('div');
+      eyes.className = 'feature eyes ' + eyeStyle;
+      eyes.style.width = '50%';
+      eyes.style.height = '20%';
+      eyes.style.top = '35%';
+      eyes.style.left = '25%';
+      eyes.style.display = 'flex';
+      eyes.style.justifyContent = 'space-between';
+      avatar.appendChild(eyes);
+
+      const leftEye = document.createElement('div');
+      leftEye.className = 'eye';
+      leftEye.style.width = '40%';
+      leftEye.style.height = '100%';
+      leftEye.style.backgroundColor = '#000';
+      eyes.appendChild(leftEye);
+
+      const rightEye = document.createElement('div');
+      rightEye.className = 'eye';
+      rightEye.style.width = '40%';
+      rightEye.style.height = '100%';
+      rightEye.style.backgroundColor = '#000';
+      eyes.appendChild(rightEye);
+
+      // 鼻子
+      const nose = document.createElement('div');
+      nose.className = 'feature nose ' + noseStyle;
+      nose.style.top = '50%';
+      nose.style.left = '45%';
+      avatar.appendChild(nose);
+
+      // 嘴巴
+      const mouth = document.createElement('div');
+      mouth.className = 'feature mouth ' + mouthStyle;
+      mouth.style.top = '65%';
+      mouth.style.left = '35%';
+      avatar.appendChild(mouth);
+    }
+
+    // 初始生成头像
+    generateAvatar();
+  </script>
+</body>
+
+</html>
