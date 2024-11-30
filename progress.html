@@ -6,6 +6,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>进度条</title>
   <style>
+    body:hover .canvasMask {
+      background: transparent;
+      transition: all 0.3s 1s linear;
+    }
+
     .line {
       width: 100%;
       max-width: 1200px;
@@ -59,11 +64,48 @@
       font-size: 48px;
       font-weight: bold;
     }
+
+    #countdown {
+      margin: 0 auto 20px;
+      width: fit-content;
+      font-size: 20px;
+      font-weight: bold;
+    }
+
+    #coinCanvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -2;
+    }
+
+    #coinMountainCanvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+    }
+
+    .canvasMask {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(255, 255, 255, 0.85);
+      transition: all 0.3s linear;
+      z-index: -1;
+    }
   </style>
 </head>
 
 <body>
   <h2>进度条 (<span id="status"></span>)</h2>
+  <div id="countdown"></div>
   <details>
     <summary>设置时间</summary>
     <div class="settings">
@@ -100,7 +142,12 @@
       <span class="percent"></span>
     </div>
     <div id="clock"></div>
+    <canvas id="coinCanvas"></canvas>
+    <canvas id="coinMountainCanvas"></canvas>
+    <div class="canvasMask"></div>
   </div>
+  <script src="./js/coin.js"></script>
+  <script src="./js/coin-mountain.js"></script>
   <script>
     function updateClock () {
       const now = new Date();
@@ -109,6 +156,25 @@
       const seconds = String(now.getSeconds()).padStart(2, '0');
       const timeString = `${hours}:${minutes}:${seconds}`;
       document.getElementById('clock').textContent = timeString;
+    }
+
+    function updateCountdown (targetTime) {
+      const target = new Date(targetTime); // 指定未来的时间
+      const now = new Date();
+      const timeDifference = target - now;
+
+      if (timeDifference <= 0) {
+        document.getElementById('countdown').textContent = '放假!!!!!!!';
+        return;
+      }
+
+      const days = String(Math.floor(timeDifference / (1000 * 60 * 60 * 24))).padStart(2, '0');
+      const hours = String(Math.floor((timeDifference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))).padStart(2, '0');
+      const minutes = String(Math.floor((timeDifference % (1000 * 60 * 60)) / (1000 * 60))).padStart(2, '0');
+      const seconds = String(Math.floor((timeDifference % (1000 * 60)) / 1000)).padStart(2, '0');
+      const timeString = `倒计时: ${days} 天 ${hours} 时 ${minutes} 分 ${seconds} 秒`;
+
+      document.getElementById('countdown').textContent = timeString;
     }
   </script>
   <script>
@@ -239,6 +305,7 @@
 
     const updateRender = () => {
       updateClock();
+      updateCountdown(dateEnd);
       timeNow = Math.min(Math.max(new Date().getTime(), timeStart), timeEnd);
 
       statusDom.innerHTML = `${isOffWork ? '下班啦' : '打工中...'}`;
@@ -286,6 +353,8 @@
       clearInterval(renderTimer);
     };
 
+    renderCoin('coinCanvas');
+    renderCoinMountain('coinMountainCanvas')
   </script>
 </body>
 
