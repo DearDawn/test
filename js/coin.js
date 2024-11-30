@@ -15,7 +15,7 @@ function renderCoin (id) {
 
   // 金币图片
   const coinImage = new Image();
-  coinImage.src = 'https://coding-demo-fullstack-serverless-vue-website-1300422826.cos.ap-guangzhou.myqcloud.com/public/images/2024-11-30-%E2%80%94Pngtree%E2%80%94illustration%20gold%20coin_6667613.png';
+  coinImage.src = 'https://coding-demo-fullstack-serverless-vue-website-1300422826.cos.ap-guangzhou.myqcloud.com/public/images/2024-11-30-172499853004587_840_560-removebg-preview.png';
 
   // 创建一个金币对象
   function createCoin () {
@@ -25,7 +25,7 @@ function renderCoin (id) {
       speedX: (Math.random() * 1 - 0.5) * devicePixelRatio, // 金币的水平速度
       speedY: (Math.random() * 2 + 2) * devicePixelRatio, // 金币的垂直速度，更快
       rotation: 0, // 金币的旋转角度
-      scale: 1.8 * devicePixelRatio,
+      scale: devicePixelRatio,
       rotationSpeed: Math.random() * 0.2 // 金币的旋转速度
     };
   }
