@@ -36,7 +36,7 @@ function renderCoinMountain (id) {
 
         ctx.save(); // 保存当前绘图状态
         // ctx.translate(coinWidth / 2, coinHeight / 2); // 移动到金币的中心点
-        // ctx.rotate(Math.random() * Math.PI * 2); // 旋转
+        // ctx.rotate(Math.random() * Math.PI / 2); // 旋转
         ctx.drawImage(coinImage, startX + x + offsetX, centerY + y + offsetY, coinWidth, coinHeight);
         ctx.restore(); // 恢复之前的绘图状态
       }
