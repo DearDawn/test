@@ -8,6 +8,8 @@ function renderCoin (id) {
   // 设置 canvas 的宽度和高度为窗口的宽度和高度
   canvas.width = window.innerWidth * devicePixelRatio;
   canvas.height = window.innerHeight * devicePixelRatio;
+  // 缩放画布上下文以匹配像素比
+  ctx.scale(devicePixelRatio, devicePixelRatio);
 
   // 存储金币的数组
   const coins = [];
@@ -23,11 +25,11 @@ function renderCoin (id) {
     return {
       x: Math.random() * canvas.width, // 金币的 x 坐标
       y: Math.random() * canvas.height - canvas.height, // 金币的 y 坐标，从顶部开始
-      speedX: (Math.random() * 1 - 0.5) * devicePixelRatio, // 金币的水平速度
-      speedY: (Math.random() * 2 + 2) * devicePixelRatio, // 金币的垂直速度，更快
+      speedX: (Math.random() * 1 - 0.5), // 金币的水平速度
+      speedY: (Math.random() * 2 + 2), // 金币的垂直速度，更快
       rotation: 0, // 金币的旋转角度
-      width: 60 * devicePixelRatio,
-      height: 40 * devicePixelRatio,
+      width: 60,
+      height: 40,
       rotationSpeed: Math.random() * 0.2 // 金币的旋转速度
     };
   }
