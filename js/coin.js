@@ -10,11 +10,12 @@ function renderCoin (id) {
   canvas.height = window.innerHeight * devicePixelRatio;
   // 缩放画布上下文以匹配像素比
   ctx.scale(devicePixelRatio, devicePixelRatio);
+  let lastTime = 0; // 记录上一帧的时间
 
   // 存储金币的数组
   const coins = [];
   // 金币的数量
-  const coinCount = 150;
+  const coinCount = 200;
 
   // 金币图片
   const coinImage = new Image();
@@ -23,14 +24,15 @@ function renderCoin (id) {
   // 创建一个金币对象
   function createCoin () {
     return {
-      x: Math.random() * canvas.width, // 金币的 x 坐标
-      y: Math.random() * canvas.height - canvas.height, // 金币的 y 坐标，从顶部开始
-      speedX: (Math.random() * 1 - 0.5), // 金币的水平速度
-      speedY: (Math.random() * 2 + 2), // 金币的垂直速度，更快
+      x: Math.random() * canvas.width / devicePixelRatio, // 金币的 x 坐标
+      y: (Math.random() * canvas.height - canvas.height), // 金币的 y 坐标，从顶部开始
+      speedX: (Math.random() * 10 - 5), // 金币的水平速度
+      speedY: (Math.random() * 100 + 100), // 金币的垂直速度，更快
       rotation: 0, // 金币的旋转角度
       width: 60,
+      acceleration: Math.random() * 50, // 垂直加速度
       height: 40,
-      rotationSpeed: Math.random() * 0.2 // 金币的旋转速度
+      rotationSpeed: Math.random() * 1.2 + 0.2 // 金币的旋转速度
     };
   }
 
@@ -56,12 +58,16 @@ function renderCoin (id) {
   }
 
   // 更新金币的位置和旋转角度
-  function updateCoins () {
+  function updateCoins (deltaTime = 0) {
+    console.log('[dodo] ', 'deltaTime', deltaTime);
     for (let i = 0; i < coins.length; i++) {
       const coin = coins[i];
-      coin.x += coin.speedX;
-      coin.y += coin.speedY;
-      coin.rotation += coin.rotationSpeed;
+      coin.x += coin.speedX * deltaTime;
+      coin.y += coin.speedY * deltaTime;
+      coin.rotation += coin.rotationSpeed * deltaTime;
+
+      // 加速金币
+      coin.speedY += coin.acceleration * deltaTime; // 增加垂直速度
 
       // 如果金币超出画布底部，则重新生成一个新的金币
       if (coin.y > canvas.height) {
@@ -71,9 +77,12 @@ function renderCoin (id) {
   }
 
   // 动画循环
-  function animate () {
+  function animate (currentTime = 0) {
+    const deltaTime = (currentTime - lastTime) / 1000; // 计算时间差，单位为秒
+    lastTime = currentTime;
+
     drawCoins(); // 绘制金币
-    updateCoins(); // 更新金币位置和旋转角度
+    updateCoins(deltaTime); // 更新金币位置和旋转角度
     requestAnimationFrame(animate); // 请求下一帧动画
   }
 
