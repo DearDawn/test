@@ -26,7 +26,7 @@ function renderCoinMountain (id) {
     const randomOffset = (maxOffset) => Math.random() * maxOffset - maxOffset / 2;
 
     // 绘制金币堆
-    let rowCoins = 3;
+    let rowCoins = 2;
     for (let y = 0; y < pileHeight; y += coinHeight / 5) {
       const rowWidth = rowCoins * coinWidth * 1.5;
       const startX = centerX - rowWidth / 2;
@@ -35,9 +35,9 @@ function renderCoinMountain (id) {
         const offsetY = randomOffset(coinHeight / 4);
 
         ctx.save(); // 保存当前绘图状态
-        // ctx.translate(coinWidth / 2, coinHeight / 2); // 移动到金币的中心点
-        // ctx.rotate(Math.random() * Math.PI / 2); // 旋转
-        ctx.drawImage(coinImage, startX + x + offsetX, centerY + y + offsetY, coinWidth, coinHeight);
+        ctx.translate(startX + x + offsetX - coinWidth / 2, centerY + y + offsetY); // 移动到金币的中心点
+        ctx.rotate(Math.random() * Math.PI / 2); // 旋转
+        ctx.drawImage(coinImage, -coinWidth / 2, - coinHeight / 2, coinWidth, coinHeight);
         ctx.restore(); // 恢复之前的绘图状态
       }
       rowCoins++;
