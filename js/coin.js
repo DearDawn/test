@@ -2,6 +2,7 @@ function renderCoin (id) {
   // 获取 canvas 元素和 2D 绘图上下文
   const canvas = document.getElementById(id);
   const ctx = canvas.getContext('2d');
+  // const devicePixelRatio = 1;
   // ctx.imageSmoothingEnabled = false;
 
   // 设置 canvas 的宽度和高度为窗口的宽度和高度
@@ -25,7 +26,8 @@ function renderCoin (id) {
       speedX: (Math.random() * 1 - 0.5) * devicePixelRatio, // 金币的水平速度
       speedY: (Math.random() * 2 + 2) * devicePixelRatio, // 金币的垂直速度，更快
       rotation: 0, // 金币的旋转角度
-      scale: devicePixelRatio,
+      width: 60 * devicePixelRatio,
+      height: 40 * devicePixelRatio,
       rotationSpeed: Math.random() * 0.2 // 金币的旋转速度
     };
   }
@@ -46,7 +48,7 @@ function renderCoin (id) {
       ctx.save(); // 保存当前绘图状态
       ctx.translate(coin.x, coin.y); // 移动到金币的中心点
       ctx.rotate(coin.rotation); // 旋转
-      ctx.drawImage(coinImage, -coinImage.width / coin.scale / 2, -coinImage.height / coin.scale / 2, coinImage.width / coin.scale, coinImage.height / coin.scale); // 绘制金币，缩小一半
+      ctx.drawImage(coinImage, -coin.width / 2, -coin.height / 2, coin.width, coin.height); // 绘制金币，缩小一半
       ctx.restore(); // 恢复之前的绘图状态
     }
   }
