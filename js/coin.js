@@ -59,7 +59,6 @@ function renderCoin (id) {
 
   // 更新金币的位置和旋转角度
   function updateCoins (deltaTime = 0) {
-    console.log('[dodo] ', 'deltaTime', deltaTime);
     for (let i = 0; i < coins.length; i++) {
       const coin = coins[i];
       coin.x += coin.speedX * deltaTime;
