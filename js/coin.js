@@ -24,7 +24,7 @@ function renderCoin (id) {
   // 创建一个金币对象
   function createCoin () {
     return {
-      x: Math.random() * canvas.width / devicePixelRatio, // 金币的 x 坐标
+      x: Math.random() * canvas.width, // 金币的 x 坐标
       y: (Math.random() * canvas.height - canvas.height), // 金币的 y 坐标，从顶部开始
       speedX: (Math.random() * 10 - 5), // 金币的水平速度
       speedY: (Math.random() * 100 + 100), // 金币的垂直速度，更快
@@ -94,5 +94,7 @@ function renderCoin (id) {
   window.addEventListener('resize', () => {
     canvas.width = window.innerWidth * devicePixelRatio;
     canvas.height = window.innerHeight * devicePixelRatio;
+    // 缩放画布上下文以匹配像素比
+    ctx.scale(devicePixelRatio, devicePixelRatio);
   });
 }
