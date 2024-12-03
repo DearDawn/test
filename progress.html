@@ -292,16 +292,19 @@
         dom.classList.remove('done');
       }
 
-      if (dom.getElementsByTagName('label')[0].innerText !== label) {
+      if (window[label] !== label) {
         dom.getElementsByTagName('label')[0].innerText = label;
+        window[label] = label;
       }
 
-      if (dom.getElementsByTagName('progress')[0].value !== progress) {
+      if (window[progress] !== progress) {
         dom.getElementsByTagName('progress')[0].value = progress;
+        window[progress] = progress;
       }
 
-      if (dom.getElementsByClassName('percent')[0].innerText !== `${progress}%`) {
+      if (window[progress] !== `${progress}%`) {
         dom.getElementsByClassName('percent')[0].innerText = `${progress}%`;
+        window[progress] = `${progress}%`;
       }
     };
 
