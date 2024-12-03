@@ -201,10 +201,11 @@
     let dateStart = new Date('2024-11-24 10:00:00').getTime();
     let dateEnd = new Date('2024-12-06 21:00:00').getTime();
 
-    let daySpan, isOffWork, dateHolidayStart, holidaySpan;
+    let daySpan, isOffWork, isOffWorkTemp, dateHolidayStart, holidaySpan;
 
     const initTime = () => {
       daySpan = timeEnd - timeStart;
+      isOffWorkTemp = isOffWork;
       isOffWork = timeNow > timeEnd && timeNow < timeStart;
       dateHolidayStart = new Date(dateEnd).setHours(new Date(timeStart).getHours());
       holidaySpan = Math.max(dateEnd - dateHolidayStart, 0);
@@ -308,12 +309,15 @@
       updateClock();
       updateCountdown(dateEnd);
       timeNow = Math.min(Math.max(new Date().getTime(), timeStart), timeEnd);
+      isOffWork = timeNow > timeEnd && timeNow < timeStart;
 
       const newText = `${isOffWork ? '下班啦' : '打工中...'}`;
 
-      if (newText !== statusDom.innerHTML) {
+      if (isOffWork !== isOffWorkTemp) {
         statusDom.innerHTML = newText;
       }
+
+      isOffWorkTemp = isOffWork;
 
       render({
         dom: lunchDom,
