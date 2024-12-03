@@ -309,7 +309,11 @@
       updateCountdown(dateEnd);
       timeNow = Math.min(Math.max(new Date().getTime(), timeStart), timeEnd);
 
-      statusDom.innerHTML = `${isOffWork ? '下班啦' : '打工中...'}`;
+      const newText = `${isOffWork ? '下班啦' : '打工中...'}`;
+
+      if (newText !== statusDom.innerHTML) {
+        statusDom.innerHTML = newText;
+      }
 
       render({
         dom: lunchDom,
