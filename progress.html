@@ -165,7 +165,7 @@
       const timeDifference = target - now;
 
       if (timeDifference <= 0) {
-        document.getElementById('countdown').textContent = '放假!!!!!!!';
+        document.getElementById('countdown').textContent = '🎉🎉🎉 通关进度 100% 恭喜宿主!!! 🎉🎉🎉';
         return;
       }
 
@@ -200,8 +200,9 @@
     let timeNightSnack = new Date().setHours(22, 0, 0, 0);
     let dateStart = new Date('2024-11-24 10:00:00').getTime();
     let dateEnd = new Date('2024-12-06 21:00:00').getTime();
+    let isFinalEnd = false;
 
-    let daySpan, isOffWork, isOffWorkTemp, dateHolidayStart, holidaySpan;
+    let daySpan, isOffWork, isOffWorkTemp, isFinalEndTemp, dateHolidayStart, holidaySpan;
 
     const initTime = () => {
       daySpan = timeEnd - timeStart;
@@ -311,16 +312,22 @@
     const updateRender = () => {
       updateClock();
       updateCountdown(dateEnd);
+      const target = new Date(dateEnd); // 指定未来的时间
+      const now = new Date();
+      isFinalEnd = (target - now) <= 0;
+      console.log('[dodo] ', 'target - now', target - now, dateEnd);
+
       timeNow = Math.min(Math.max(new Date().getTime(), timeStart), timeEnd);
       isOffWork = timeNow > timeEnd && timeNow < timeStart;
 
-      const newText = `${isOffWork ? '下班啦' : '打工中...'}`;
+      const newText = `${isFinalEnd ? '放假啦!!!' : isOffWork ? '下班啦!!!' : '打工中...'}`;
 
-      if (isOffWork !== isOffWorkTemp) {
+      if (isOffWork !== isOffWorkTemp || isFinalEnd !== isFinalEndTemp) {
         statusDom.innerHTML = newText;
       }
 
       isOffWorkTemp = isOffWork;
+      isFinalEndTemp = isFinalEnd;
 
       render({
         dom: lunchDom,
