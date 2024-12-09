@@ -198,8 +198,8 @@
     let timeLunch = new Date().setHours(12, 0, 0, 0);
     let timeDinner = new Date().setHours(18, 0, 0, 0);
     let timeNightSnack = new Date().setHours(22, 0, 0, 0);
-    let dateStart = new Date('2024-11-24 10:00:00').getTime();
-    let dateEnd = new Date('2024-12-06 21:00:00').getTime();
+    let dateStart = new Date('2024-12-09 10:00:00').getTime();
+    let dateEnd = new Date('2024-12-13 21:00:00').getTime();
     let isFinalEnd = false;
 
     let daySpan, isOffWork, isOffWorkTemp, isFinalEndTemp, dateHolidayStart, holidaySpan;
@@ -374,6 +374,22 @@
 
     renderCoin('coinCanvas');
     renderCoinMountain('coinMountainCanvas')
+  </script>
+  <script src="//unpkg.com/version-polling/dist/version-polling.min.js"></script>
+  <script>
+    VersionPolling.createVersionPolling({
+      appETagKey: "__APP_ETAG__",
+      pollingInterval: 10 * 1000,
+      onUpdate: (self) => {
+        // 当检测到有新版本时，执行的回调函数，可以在这里提示用户刷新页面
+        const result = confirm("页面有更新，点击确定刷新页面！");
+        if (result) {
+          self.onRefresh();
+        } else {
+          self.onCancel();
+        }
+      },
+    });
   </script>
 </body>
 
