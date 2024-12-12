@@ -205,6 +205,9 @@
     let daySpan, isOffWork, isOffWorkTemp, isFinalEndTemp, dateHolidayStart, holidaySpan;
 
     const initTime = () => {
+      let isLastDay = new Date(timeNow).getDate() === new Date(dateEnd).getDate();
+      timeEnd = isLastDay ? dateEnd : timeEnd;
+
       daySpan = timeEnd - timeStart;
       isOffWorkTemp = isOffWork;
       isOffWork = timeNow > timeEnd && timeNow < timeStart;
