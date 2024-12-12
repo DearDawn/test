@@ -205,9 +205,6 @@
     let daySpan, isOffWork, isOffWorkTemp, isFinalEndTemp, dateHolidayStart, holidaySpan;
 
     const initTime = () => {
-      let isLastDay = new Date(timeNow).getDate() === new Date(dateEnd).getDate();
-      timeEnd = isLastDay ? dateEnd : timeEnd;
-
       daySpan = timeEnd - timeStart;
       isOffWorkTemp = isOffWork;
       isOffWork = timeNow > timeEnd && timeNow < timeStart;
@@ -315,6 +312,8 @@
     const updateRender = () => {
       updateClock();
       updateCountdown(dateEnd);
+      let isLastDay = new Date(timeNow).getDate() === new Date(dateEnd).getDate();
+      timeEnd = isLastDay ? dateEnd : timeEnd;
       const target = new Date(dateEnd); // 指定未来的时间
       const now = new Date();
       isFinalEnd = (target - now) <= 0;
@@ -342,11 +341,16 @@
         label: `晚饭（${formatDate(timeDinner)}）`,
         progress: getPercent(timeStart, timeDinner),
       });
-      render({
-        dom: nightSnackDom,
-        label: `夜宵（${formatDate(timeNightSnack)}）`,
-        progress: getPercent(timeStart, timeNightSnack),
-      });
+      if (!isLastDay) {
+        nightSnackDom.style.display = 'flex';
+        render({
+          dom: nightSnackDom,
+          label: `夜宵（${formatDate(timeNightSnack)}）`,
+          progress: getPercent(timeStart, timeNightSnack),
+        });
+      } else {
+        nightSnackDom.style.display = 'none';
+      }
       render({
         dom: off,
         label: `下班（${formatDate(timeEnd)}）`,
