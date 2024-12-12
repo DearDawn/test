@@ -317,7 +317,7 @@
       const target = new Date(dateEnd); // 指定未来的时间
       const now = new Date();
       isFinalEnd = (target - now) <= 0;
-      console.log('[dodo] ', 'target - now', target - now, dateEnd);
+      // console.log('[dodo] ', 'target - now', target - now, dateEnd);
 
       timeNow = Math.min(Math.max(new Date().getTime(), timeStart), timeEnd);
       isOffWork = timeNow > timeEnd && timeNow < timeStart;
