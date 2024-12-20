@@ -328,6 +328,14 @@
         statusDom.innerHTML = newText;
       }
 
+      if (timeNow > timeEnd) {
+        timeStart = new Date().setHours(10, 0, 0, 0);
+        timeEnd = new Date().setHours(22, 30, 0, 0);
+        timeLunch = new Date().setHours(12, 0, 0, 0);
+        timeDinner = new Date().setHours(18, 0, 0, 0);
+        timeNightSnack = new Date().setHours(22, 0, 0, 0);
+      }
+
       isOffWorkTemp = isOffWork;
       isFinalEndTemp = isFinalEnd;
 
