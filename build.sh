@@ -16,6 +16,8 @@ if [[ $? != 0 ]]; then
   exit 1
 fi
 
+node ./run.js
+
 PUBLIC_PATH=$PROJECT_PATH$PROJECT_NAME
 echo "start moving" $PUBLIC_PATH
 

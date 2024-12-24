@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width">
+  <title>TEST 完全导航</title>
+  <style>
+    body,
+    html {
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f4;
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      min-width: 600px;
+    }
+
+    .root {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      overflow: hidden;
+      height: 100%;
+      width: 100%;
+      justify-content: center;
+    }
+
+    .container {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0px auto 50px;
+      padding: 20px 20px 20px 5px;
+      background: #fff;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      overflow: hidden;
+      width: calc(100% - 200px);
+      height: calc(100vh - 200px);
+    }
+
+    .content {
+      display: flex;
+      width: 100%;
+    }
+
+    h1 {
+      text-align: center;
+      color: #333;
+    }
+
+    .page-list {
+      list-style: none;
+      padding: 0;
+      overflow: auto;
+      width: 150px;
+      flex: none;
+      height: 100%;
+      overflow: auto;
+      padding: 0 10px;
+      margin-right: 10px;
+    }
+
+    .page-list li {
+      margin: 10px 0 0 0;
+      background: #ddd;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      padding: 5px 10px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 14px;
+      transition: all 0.1s linear;
+    }
+
+    .page-list li.active {
+      background: #999;
+      color: #fff;
+    }
+
+    .page-list li:hover {
+      background: #333;
+      color: #fff;
+    }
+
+    .frame-wrap {
+      flex: 1;
+      min-width: 250px;
+      height: 100%;
+      border: none;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      overflow: hidden;
+    }
+
+    .frame-wrap-phone {
+      flex: none;
+      width: 250px;
+      height: 100%;
+      border: none;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      overflow: hidden;
+      margin-left: 20px;
+    }
+
+    iframe {
+      border: none;
+      width: 150%;
+      height: 150%;
+      transform: scale(calc(1/1.5));
+      transform-origin: top left;
+      padding: 0;
+      margin: 0;
+      display: block;
+    }
+
+
+    @media screen and (max-width: 900px) {
+      .frame-wrap-phone {
+        display: none;
+      }
+
+      .container {
+        width: calc(100% - 160px);
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="root">
+    <h1>TEST 完全导航</h1>
+    <div class="container">
+      <ul class="page-list" id="page-list">
+        <!-- 页面列表将在这里动态生成 -->
+      </ul>
+      <div class="frame-wrap">
+        <iframe id="page-iframe" src=""></iframe>
+      </div>
+      <div class="frame-wrap-phone">
+        <iframe id="page-iframe-phone" src=""></iframe>
+      </div>
+    </div>
+  </div>
+  <script>
+    const getPages = async () => fetch('./pages.json').then(res => res.json());
+
+    // 渲染页面列表
+    const pageList = document.getElementById('page-list');
+    const iframe = document.getElementById('page-iframe');
+    const iframePhone = document.getElementById('page-iframe-phone');
+
+    getPages().then(pages => {
+      console.log('[dodo] ', 'pages', pages);
+
+      pages.forEach(page => {
+        const url = `./${page.name}.html`;
+        const li = document.createElement('li');
+        li.textContent = `${page.name}`;
+        li.addEventListener('click', () => {
+          iframe.src = url;
+          iframePhone.src = url;
+          pageList.querySelector('li.active')?.classList.remove('active');
+          li.classList.add('active');
+        });
+        pageList.appendChild(li);
+      });
+
+      pageList.firstElementChild.click();
+    });
+  </script>
+</body>
