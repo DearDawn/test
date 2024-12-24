@@ -210,6 +210,61 @@
       box.addEventListener('touchmove', move, { passive: false });
       box.addEventListener('touchend', end, { passive: false });
       box.addEventListener('touchcancel', end, { passive: false });
+      let pressed = false;
+
+      // 监听 mousedown 事件，触发 touchstart 事件
+      box.addEventListener('mousedown', function (e) {
+        pressed = true;
+        simulateTouchEvent('touchstart', e);
+      });
+
+      // 监听 mousemove 事件，触发 touchmove 事件
+      box.addEventListener('mousemove', function (e) {
+        if (!pressed) return;
+
+        simulateTouchEvent('touchmove', e);
+      });
+
+      // 监听 mouseup 事件，触发 touchend 事件
+      box.addEventListener('mouseup', function (e) {
+        pressed = false;
+        simulateTouchEvent('touchend', e);
+        simulateTouchEvent('touchcancel', e);
+      });
+
+      // 监听 mouseup 事件，触发 touchend 事件
+      document.addEventListener('mouseleave', function (e) {
+        pressed = false;
+        simulateTouchEvent('touchend', e);
+        simulateTouchEvent('touchcancel', e);
+      });
+
+      // 模拟触摸事件
+      function simulateTouchEvent (eventName, mouseEvent) {
+        // 创建一个 Touch 对象
+        const touch = new Touch({
+          identifier: Date.now(), // 唯一标识符
+          target: mouseEvent.target, // 目标元素
+          clientX: mouseEvent.clientX, // 鼠标 X 坐标
+          clientY: mouseEvent.clientY, // 鼠标 Y 坐标
+          screenX: mouseEvent.screenX, // 屏幕 X 坐标
+          screenY: mouseEvent.screenY, // 屏幕 Y 坐标
+          pageX: mouseEvent.pageX, // 页面 X 坐标
+          pageY: mouseEvent.pageY, // 页面 Y 坐标
+        });
+
+        // 创建一个 TouchEvent 对象
+        const touchEvent = new TouchEvent(eventName, {
+          bubbles: true, // 事件是否冒泡
+          cancelable: true, // 事件是否可取消
+          touches: [touch], // 当前的触摸点
+          targetTouches: [touch], // 目标元素上的触摸点
+          changedTouches: [touch], // 变化的触摸点
+        });
+
+        // 触发触摸事件
+        mouseEvent.target.dispatchEvent(touchEvent);
+      }
     }
 
     addTouchEvent();
