@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CSV 转 JSON</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+    }
+
+    h1 {
+      font-size: 24px;
+    }
+
+    textarea {
+      width: 100%;
+      height: 300px;
+      font-family: monospace;
+      font-size: 14px;
+      padding: 10px;
+      box-sizing: border-box;
+    }
+
+    input[type="file"] {
+      margin-bottom: 20px;
+    }
+
+    .result {
+      margin-top: 20px;
+    }
+  </style>
+</head>
+
+<body>
+  <h1>CSV 转 JSON 转换器</h1>
+  <input type="file" id="csvFileInput" accept=".csv" />
+  <div class="result">
+    <h2>JSON 结果：</h2>
+    <textarea id="jsonResult" readonly></textarea>
+  </div>
+
+  <script>
+    document.getElementById('csvFileInput').addEventListener('change', function (event) {
+      const file = event.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function (e) {
+          const csvData = e.target.result;
+          const jsonResult = convertCsvToJson(csvData);
+          document.getElementById('jsonResult').value = JSON.stringify(jsonResult, null, 2);
+        };
+        reader.readAsText(file);
+      }
+    });
+
+    function convertCsvToJson (csvData) {
+      const rows = csvData.split('\n');
+      const headers = rows[0].split(',');
+      const headerMap = {
+        '演唱歌曲': 'songs',
+        '时间': 'date',
+        '地点': 'location',
+        '类型': 'activity'
+      };
+
+      const results = [];
+      for (let i = 1; i < rows.length; i++) {
+        const row = rows[i].split(',');
+
+        // 跳过空行
+        if (row.length === 1 && row[0].trim() === '') continue;
+
+        const rowData = {};
+        headers.forEach((header, index) => {
+          // 处理演唱歌曲1, 演唱歌曲2, ..., 演唱歌曲30
+          if (header.startsWith('演唱歌曲')) {
+            if (!rowData[headerMap['演唱歌曲']]) {
+              rowData[headerMap['演唱歌曲']] = [];
+            }
+            if (row[index] && row[index].trim() !== '') {
+              rowData[headerMap['演唱歌曲']].push(row[index].trim());
+            }
+          } else if (!Number.isNaN(Number(header))) {
+            if (row[index].trim()) {
+              rowData[headerMap['演唱歌曲']].push();
+            }
+          } else {
+            rowData[headerMap[header.trim()]] = row[index] ? row[index].trim() : null;
+          }
+        });
+
+        results.push(rowData);
+      }
+
+      return results;
+    }
+  </script>
+</body>
+
+</html>
