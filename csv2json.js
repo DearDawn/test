@@ -2,7 +2,7 @@ const xlsx = require('xlsx');
 const fs = require('fs');
 const path = require('path');
 
-const excelFilePath = './public/record.xlsx'; // 改为Excel文件路径
+const excelFilePath = './public/record1.xlsx'; // 改为Excel文件路径
 const jsonFilePath = './public/output/list.json';
 const jsonFilePathSong = './public/output/song.json';
 
@@ -66,7 +66,7 @@ for (let rowIndex = 1; rowIndex < rows.length; rowIndex++) {
   };
 
   const insertLink = (hyperlink) => {
-    rowData.link = hyperlink ? [...(rowData.link || []), hyperlink] : rowData.link;
+    rowData.links = hyperlink ? [...(rowData.links || []), hyperlink] : rowData.links;
   };
 
   headers.forEach((_header, index) => {
