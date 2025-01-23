@@ -102,7 +102,8 @@ for (let rowIndex = 1; rowIndex < rows.length; rowIndex++) {
     }
   });
 
-  rowData.key = `${rowData.date}_${rowData.location}_${rowData.activity}`;
+  rowData.type = '演出现场'
+  rowData.key = `${rowData.type}_${rowData.date}_${rowData.location}_${rowData.activity}`;
   results.push(rowData);
 }
 
