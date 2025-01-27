@@ -2,7 +2,7 @@ const xlsx = require('xlsx');
 const fs = require('fs');
 const path = require('path');
 
-const excelFilePath = './public/record1.xlsx'; // 改为Excel文件路径
+const excelFilePath = './public/record2.xlsx'; // 改为Excel文件路径
 const jsonFilePath = './public/output/list.json';
 const jsonFilePathSong = './public/output/song.json';
 
