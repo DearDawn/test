@@ -5,7 +5,7 @@ const path = require('path');
 const excelFilePath = './public/record2.xlsx';
 
 // 读取Excel文件
-const workbook = xlsx.readFile(excelFilePath);
+const workbook = xlsx.readFile(excelFilePath, { cellStyles: true });
 
 // 解析超链接
 const getHyperlink = (cell, workbook) => {
@@ -54,9 +54,10 @@ function toTimestamp(dateStr) {
   }
   // 如果格式不匹配，抛出错误
   else {
-    throw new Error(
+    console.error(
       '日期格式不正确，请输入 YYYY-MM-DD、YYYY-MM 或 YYYY 格式的日期'
     );
+    return 0;
   }
 
   // 返回时间戳（毫秒数）
@@ -123,7 +124,7 @@ const getActivityList = () => {
     headers.forEach((_header, index) => {
       const header = String(_header).trim();
       const cell = worksheet[xlsx.utils.encode_cell({ r: rowIndex, c: index })];
-      const value = cell ? String(cell.v) : '';
+      const value = cell ? String(cell.v || '') : '';
 
       if (header.startsWith('演唱歌曲')) {
         if (!rowData[headerMap['演唱歌曲']]) {
@@ -239,7 +240,7 @@ const getWebLiveList = () => {
     headers.forEach((_header, index) => {
       const header = String(_header).trim();
       const cell = worksheet[xlsx.utils.encode_cell({ r: rowIndex, c: index })];
-      const value = cell ? String(cell.v) : '';
+      const value = cell ? String(cell.v || '') : '';
 
       if (header.startsWith('演唱歌曲')) {
         if (!rowData[headerMap['演唱歌曲']]) {
@@ -295,6 +296,74 @@ const getWebLiveList = () => {
   console.log('songMap 已成功转换为 JSON 文件:', jsonFilePathSong);
 };
 
+const getSongInfo = () => {
+  // 改为Excel文件路径
+  const jsonFilePathSong = './public/output/song_info_list.json';
+
+  const sheetName = workbook.SheetNames[2];
+  const worksheet = workbook.Sheets[sheetName];
+
+  // 将Excel数据转换为JSON
+  const rows = xlsx.utils.sheet_to_json(worksheet, { header: 1 });
+
+  // 获取表头
+  const headers = rows[0];
+  const headerMap = {
+    顺序: 'sort',
+    歌名: 'song',
+    发布时间: 'date',
+    翻唱: 'is_cover',
+    专辑: 'album',
+    作词: 'author_lyrics',
+    作曲: 'author_compose',
+    编曲: 'author_arrange',
+    制作人: 'author_produce',
+  };
+
+  const results = [];
+
+  // 遍历每一行数据
+  for (let rowIndex = 1; rowIndex < rows.length; rowIndex++) {
+    const row = rows[rowIndex];
+    if (!row || row.length === 0) continue;
+
+    const rowData = {};
+
+    headers.forEach((_header, index) => {
+      const header = String(_header).trim();
+      const cell = worksheet[xlsx.utils.encode_cell({ r: rowIndex, c: index })];
+      const value = cell ? String(cell.v || '') : '';
+      const style = cell?.s || {};
+      if (header.startsWith('歌名')) {
+        rowData[headerMap['歌名']] = value.trim();
+        rowData[headerMap['翻唱']] =
+          (style && style.fgColor?.rgb === 'FFFF00') ||
+          style.bgColor?.rgb === 'FFFF00';
+      } else if (header === '顺序') {
+        rowData[headerMap['顺序']] = Number(value.trim());
+      } else {
+        const headerKey = headerMap[header];
+
+        if (!rowData[headerKey]) {
+          rowData[headerKey] = {};
+        }
+
+        if (headerKey === headerMap['发布时间']) {
+          rowData[headerKey] = getDateStr(value.trim());
+          rowData['timestamp'] = toTimestamp(rowData[headerKey]);
+        } else {
+          rowData[headerKey] = value.trim();
+        }
+      }
+    });
+
+    results.push(rowData);
+  }
+
+  fs.writeFileSync(jsonFilePathSong, JSON.stringify(results, null, 2));
+  console.log('songMap 已成功转换为 JSON 文件:', jsonFilePathSong);
+};
+
 const geVideoInterviewList = () => {
   // 改为Excel文件路径
   const jsonFilePath = './public/output/list_video.json';
@@ -332,7 +401,7 @@ const geVideoInterviewList = () => {
     headers.forEach((_header, index) => {
       const header = String(_header).trim();
       const cell = worksheet[xlsx.utils.encode_cell({ r: rowIndex, c: index })];
-      const value = cell ? String(cell.v) : '';
+      const value = cell ? String(cell.v || '') : '';
 
       const headerKey = headerMap[header];
 
@@ -368,5 +437,6 @@ const geVideoInterviewList = () => {
 };
 
 // getActivityList();
-getWebLiveList();
+// getWebLiveList();
+getSongInfo();
 // geVideoInterviewList();
