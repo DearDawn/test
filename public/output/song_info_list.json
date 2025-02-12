@@ -759,8 +759,11 @@
     "sort": 64,
     "song": "原来大理",
     "is_cover": false,
-    "date": "——",
-    "timestamp": 0,
+    "date": "2020-11-14",
+    "timestamp": 1605283200000,
+    "links": [
+      "https://weibo.com/tv/show/1034:4571166355161117"
+    ],
     "album": "",
     "author_compose": "吴佩岭",
     "author_lyrics": "方文山",

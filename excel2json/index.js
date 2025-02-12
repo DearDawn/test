@@ -350,8 +350,16 @@ const getSongInfo = () => {
         }
 
         if (headerKey === headerMap['发布时间']) {
-          rowData[headerKey] = getDateStr(value.trim());
-          rowData['timestamp'] = toTimestamp(rowData[headerKey]);
+          if (rowData[headerMap['歌名']] === '原来大理') {
+            rowData[headerKey] = '2020-11-14';
+            rowData['timestamp'] = 1605283200000;
+            rowData['links'] = [
+              'https://weibo.com/tv/show/1034:4571166355161117',
+            ];
+          } else {
+            rowData[headerKey] = getDateStr(value.trim());
+            rowData['timestamp'] = toTimestamp(rowData[headerKey]);
+          }
         } else {
           rowData[headerKey] = value.trim();
         }
@@ -366,7 +374,7 @@ const getSongInfo = () => {
       date: it.date,
       timestamp: it.timestamp,
       location: it.is_cover ? '翻唱' : '原唱',
-      links: [],
+      links: it.links || [],
       activity: it.song,
       songs: [it.song],
       type: '发布歌曲',
