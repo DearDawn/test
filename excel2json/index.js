@@ -298,6 +298,7 @@ const getWebLiveList = () => {
 
 const getSongInfo = () => {
   // 改为Excel文件路径
+  const jsonFilePath = './public/output/list_song_publish.json';
   const jsonFilePathSong = './public/output/song_info_list.json';
 
   const sheetName = workbook.SheetNames[2];
@@ -359,6 +360,31 @@ const getSongInfo = () => {
 
     results.push(rowData);
   }
+
+  const publishListInfo = results.map((it) => {
+    const info = {
+      date: it.date,
+      timestamp: it.timestamp,
+      location: it.is_cover ? '翻唱' : '原唱',
+      links: [],
+      activity: it.song,
+      songs: [it.song],
+      type: '发布歌曲',
+      key: '',
+    };
+    info.key = `${info.type}_${info.date}_${info.location}_${info.activity}`;
+    // info.key = `${info.date}_${info.location}_${info.activity}`;
+    // info.newKey = `${info.type}_${info.date}_${info.location}_${info.activity}`;
+    return info;
+  });
+
+  // 写入JSON文件
+  if (!fs.existsSync(path.dirname(jsonFilePath))) {
+    fs.mkdirSync(path.dirname(jsonFilePath));
+  }
+
+  fs.writeFileSync(jsonFilePath, JSON.stringify(publishListInfo, null, 2));
+  console.log('Excel 文件已成功转换为 JSON 文件:', jsonFilePath);
 
   fs.writeFileSync(jsonFilePathSong, JSON.stringify(results, null, 2));
   console.log('songMap 已成功转换为 JSON 文件:', jsonFilePathSong);
