@@ -470,7 +470,152 @@ const geVideoInterviewList = () => {
   console.log('Excel 文件已成功转换为 JSON 文件:', jsonFilePath);
 };
 
+const geTextInterviewList = () => {
+  // 改为Excel文件路径
+  const jsonFilePath = './public/output/list_text.json';
+
+  const sheetName = workbook.SheetNames[5];
+  const worksheet = workbook.Sheets[sheetName];
+
+  // 将Excel数据转换为JSON
+  const rows = xlsx.utils.sheet_to_json(worksheet, { header: 1 });
+
+  // 获取表头
+  const headers = rows[0];
+  const headerMap = {
+    发布时间: 'date',
+    发布者: 'location',
+    文章标题: 'activity',
+  };
+
+  const songMap = {};
+  const results = [];
+
+  // 遍历每一行数据
+  for (let rowIndex = 1; rowIndex < rows.length; rowIndex++) {
+    const row = rows[rowIndex];
+    if (!row || row.length === 0) continue;
+
+    const rowData = {};
+
+    const insertLink = (hyperlink) => {
+      rowData.links = hyperlink
+        ? [...(rowData.links || []), hyperlink]
+        : rowData.links;
+    };
+
+    headers.forEach((_header, index) => {
+      const header = String(_header).trim();
+      const cell = worksheet[xlsx.utils.encode_cell({ r: rowIndex, c: index })];
+      const value = cell ? String(cell.v || '') : '';
+
+      const headerKey = headerMap[header];
+
+      if (!rowData[headerKey]) {
+        rowData[headerKey] = {};
+      }
+
+      if (headerKey === headerMap['发布时间']) {
+        rowData[headerKey] = getDateStr(value.trim());
+        rowData['timestamp'] = toTimestamp(rowData[headerKey]);
+      } else if (headerKey === headerMap['发布者']) {
+        rowData[headerKey] = value.trim();
+      } else if (headerKey === headerMap['文章标题']) {
+        rowData[headerKey] = value.trim();
+        insertLink(getHyperlink(cell, workbook));
+      } else {
+        rowData[headerKey] = value.trim();
+      }
+    });
+
+    rowData.type = '文字专访';
+    rowData.key = `${rowData.type}_${rowData.date}_${rowData.location}_${rowData.activity}`;
+    results.push(rowData);
+  }
+
+  // 写入JSON文件
+  if (!fs.existsSync(path.dirname(jsonFilePath))) {
+    fs.mkdirSync(path.dirname(jsonFilePath));
+  }
+
+  fs.writeFileSync(jsonFilePath, JSON.stringify(results, null, 2));
+  console.log('Excel 文件已成功转换为 JSON 文件:', jsonFilePath);
+};
+
+const getBodCastList = () => {
+  // 改为Excel文件路径
+  const jsonFilePath = './public/output/list_bod_cast.json';
+
+  const sheetName = workbook.SheetNames[6];
+  const worksheet = workbook.Sheets[sheetName];
+
+  // 将Excel数据转换为JSON
+  const rows = xlsx.utils.sheet_to_json(worksheet, { header: 1 });
+
+  // 获取表头
+  const headers = rows[0];
+  const headerMap = {
+    发布时间: 'date',
+    发布者: 'location',
+    备注: 'activity',
+  };
+
+  const results = [];
+
+  // 遍历每一行数据
+  for (let rowIndex = 1; rowIndex < rows.length; rowIndex++) {
+    const row = rows[rowIndex];
+    if (!row || row.length === 0) continue;
+
+    const rowData = {};
+
+    const insertLink = (hyperlink) => {
+      rowData.links = hyperlink
+        ? [...(rowData.links || []), hyperlink]
+        : rowData.links;
+    };
+
+    headers.forEach((_header, index) => {
+      const header = String(_header).trim();
+      const cell = worksheet[xlsx.utils.encode_cell({ r: rowIndex, c: index })];
+      const value = cell ? String(cell.v || '') : '';
+
+      const headerKey = headerMap[header];
+
+      if (!rowData[headerKey]) {
+        rowData[headerKey] = {};
+      }
+
+      if (headerKey === headerMap['发布时间']) {
+        rowData[headerKey] = getDateStr(value.trim());
+        rowData['timestamp'] = toTimestamp(rowData[headerKey]);
+      } else if (headerKey === headerMap['发布者']) {
+        rowData[headerKey] = value.trim();
+      } else if (headerKey === headerMap['备注']) {
+        rowData[headerKey] = value.trim();
+        insertLink(getHyperlink(cell, workbook));
+      } else {
+        rowData[headerKey] = value.trim();
+      }
+    });
+
+    rowData.type = '电台播客';
+    rowData.key = `${rowData.type}_${rowData.date}_${rowData.location}_${rowData.activity}`;
+    results.push(rowData);
+  }
+
+  // 写入JSON文件
+  if (!fs.existsSync(path.dirname(jsonFilePath))) {
+    fs.mkdirSync(path.dirname(jsonFilePath));
+  }
+
+  fs.writeFileSync(jsonFilePath, JSON.stringify(results, null, 2));
+  console.log('Excel 文件已成功转换为 JSON 文件:', jsonFilePath);
+};
+
 // getActivityList();
+// getSongInfo();
 // getWebLiveList();
-getSongInfo();
 // geVideoInterviewList();
+// geTextInterviewList();
+getBodCastList();
