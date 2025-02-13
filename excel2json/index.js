@@ -2,7 +2,7 @@ const xlsx = require('xlsx');
 const fs = require('fs');
 const path = require('path');
 
-const excelFilePath = './public/record2.xlsx';
+const excelFilePath = './public/record_250213.xlsx';
 
 // 读取Excel文件
 const workbook = xlsx.readFile(excelFilePath, { cellStyles: true });
@@ -726,10 +726,10 @@ const getBodCastList = () => {
   console.log('Excel 文件已成功转换为 JSON 文件:', jsonFilePath);
 };
 
-// getActivityList();
+getActivityList();
 getShowList();
-// getSongInfo();
-// getWebLiveList();
-// geVideoInterviewList();
-// geTextInterviewList();
-// getBodCastList();
+getSongInfo();
+getWebLiveList();
+geVideoInterviewList();
+geTextInterviewList();
+getBodCastList();
