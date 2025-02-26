@@ -471,5 +471,27 @@
     ],
     "type": "视频专访",
     "key": "视频专访_2025-02-11_网易原创音乐_网易音乐人十周年🔒解锁特别对谈"
+  },
+  {
+    "date": "2025-02-18",
+    "timestamp": 1739836800000,
+    "location": "STARBOX人物",
+    "activity": "STARBOX x 房东的猫（1）",
+    "links": [
+      "https://weibo.com/tv/show/1034:5135440144171011?from=old_pc_videoshow"
+    ],
+    "type": "视频专访",
+    "key": "视频专访_2025-02-18_STARBOX人物_STARBOX x 房东的猫（1）"
+  },
+  {
+    "date": "2025-02-21",
+    "timestamp": 1740096000000,
+    "location": "STARBOX人物",
+    "activity": "STARBOX x 房东的猫 默契大考验",
+    "links": [
+      "https://weibo.com/tv/show/1034:5136485775507488?from=old_pc_videoshow"
+    ],
+    "type": "视频专访",
+    "key": "视频专访_2025-02-21_STARBOX人物_STARBOX x 房东的猫 默契大考验"
   }
 ]

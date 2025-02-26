@@ -10155,5 +10155,26 @@
     ],
     "type": "演出现场",
     "key": "演出现场_2025-01-18_南平_群星演唱会"
+  },
+  {
+    "date": "2025-02-22",
+    "timestamp": 1740182400000,
+    "location": "海口",
+    "links": [
+      "https://www.bilibili.com/video/BV1bdPKeeEaT/?spm_id_from=333.337.search-card.all.click&amp;vd_source=1bf4ec9100ad145d8bda4444308e0281"
+    ],
+    "activity": "音乐节",
+    "songs": [
+      "所念皆星河",
+      "和宇宙的温柔关联",
+      "边界",
+      "城市动物园",
+      "银河迪厅",
+      "少年时",
+      "下一次",
+      "云烟成雨"
+    ],
+    "type": "演出现场",
+    "key": "演出现场_2025-02-22_海口_音乐节"
   }
 ]
