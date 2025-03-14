@@ -594,5 +594,21 @@
     ],
     "type": "网络直播",
     "key": "网络直播_2024-12-15_微博_微博音乐大赏直播"
+  },
+  {
+    "date": "2025-03-07",
+    "timestamp": 1741305600000,
+    "links": [
+      "https://www.bilibili.com/video/BV1qD9UYrE5R/?spm_id_from=333.1007.top_right_bar_window_dynamic.content.click&amp;vd_source=1bf4ec9100ad145d8bda4444308e0281"
+    ],
+    "location": "网易云音乐",
+    "activity": "房东的猫×网易云 音乐人来了",
+    "songs": [
+      "愿你有故乡",
+      "至此",
+      "一次就好"
+    ],
+    "type": "网络直播",
+    "key": "网络直播_2025-03-07_网易云音乐_房东的猫×网易云 音乐人来了"
   }
 ]

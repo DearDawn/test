@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>张三 - 个人简历</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Arial, sans-serif;
+        }
+
+        body {
+            background-color: #f5f5f5;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 30px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            background-color: #2c3e50;
+            color: white;
+            padding: 40px 20px;
+            border-radius: 10px;
+        }
+
+        .section {
+            background: white;
+            padding: 30px;
+            margin-bottom: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .projects-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .project-card {
+            border: 1px solid #eee;
+            padding: 20px;
+            border-radius: 8px;
+        }
+
+        .contact-info {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            flex-wrap: wrap;
+        }
+
+        .icon {
+            width: 20px;
+            height: 20px;
+            margin-right: 8px;
+            vertical-align: middle;
+        }
+
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        h2 {
+            color: #2980b9;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 10px;
+        }
+
+        .skill-tags {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .tag {
+            background: #f0f0f0;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.9em;
+        }
+
+        a {
+            color: #2980b9;
+            text-decoration: none;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1>张三</h1>
+            <p>全栈开发工程师 | 5年经验</p>
+        </header>
+
+        <section class="section">
+            <h2>👤 个人信息</h2>
+            <div class="contact-info">
+                <div>
+                    <img src="email-icon.svg" alt="邮箱" class="icon">
+                    zhangsan@example.com
+                </div>
+                <div>
+                    <img src="phone-icon.svg" alt="电话" class="icon">
+                    (+86) 138-1234-5678
+                </div>
+                <div>
+                    <img src="github-icon.svg" alt="GitHub" class="icon">
+                    <a href="https://github.com/username">github.com/username</a>
+                </div>
+            </div>
+        </section>
+
+        <section class="section">
+            <h2>🚀 技术栈</h2>
+            <div class="skill-tags">
+                <span class="tag">JavaScript</span>
+                <span class="tag">React</span>
+                <span class="tag">Node.js</span>
+                <span class="tag">Python</span>
+                <span class="tag">Docker</span>
+                <span class="tag">AWS</span>
+            </div>
+        </section>
+
+        <section class="section">
+            <h2>💼 项目经验</h2>
+            <div class="projects-grid">
+                <!-- 项目1 -->
+                <div class="project-card">
+                    <h3>电商平台重构</h3>
+                    <p class="text-muted">2023.03 - 2023.08</p>
+                    <p>使用React+Node.js重构核心模块，提升页面加载速度40%</p>
+                    <div class="skill-tags">
+                        <span class="tag">React</span>
+                        <span class="tag">Node.js</span>
+                    </div>
+                    <a href="#">查看项目 →</a>
+                </div>
+
+                <!-- 项目2 -->
+                <div class="project-card">
+                    <h3>智能运维系统</h3>
+                    <p class="text-muted">2022.05 - 2023.02</p>
+                    <p>基于Python开发自动化运维平台，支持200+服务器管理</p>
+                    <div class="skill-tags">
+                        <span class="tag">Python</span>
+                        <span class="tag">Django</span>
+                    </div>
+                    <a href="#">查看项目 →</a>
+                </div>
+
+                <!-- 更多项目... -->
+            </div>
+        </section>
+
+        <section class="section">
+            <h2>🎓 教育背景</h2>
+            <p><strong>清华大学</strong> - 计算机科学与技术（硕士）</p>
+            <p class="text-muted">2016.09 - 2020.06</p>
+        </section>
+    </div>
+</body>
+</html>

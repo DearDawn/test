@@ -493,5 +493,16 @@
     ],
     "type": "视频专访",
     "key": "视频专访_2025-02-21_STARBOX人物_STARBOX x 房东的猫 默契大考验"
+  },
+  {
+    "date": "2025-02-28",
+    "timestamp": 1740700800000,
+    "location": "芒果大直播官方号",
+    "activity": "房东的猫专访正片",
+    "links": [
+      "https://weibo.com/tv/show/1034:5138985257992230?from=old_pc_videoshow"
+    ],
+    "type": "视频专访",
+    "key": "视频专访_2025-02-28_芒果大直播官方号_房东的猫专访正片"
   }
 ]

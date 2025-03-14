@@ -328,5 +328,16 @@
     ],
     "type": "电台播客",
     "key": "电台播客_2024-09-18_中国交通广播（重庆）FM100.5_中国交通广播连线"
+  },
+  {
+    "date": "2025-03-06",
+    "timestamp": 1741219200000,
+    "location": "房东的猫",
+    "activity": "房东的猫“她”歌单推荐（上）",
+    "links": [
+      "https://music.163.com/#/program?id=3073093215&amp;uct2=GB0fDxSnZuQXKEwmi96R8A%3D%3D&amp;djId=3375937&amp;app_version=9.2.50"
+    ],
+    "type": "电台播客",
+    "key": "电台播客_2025-03-06_房东的猫_房东的猫“她”歌单推荐（上）"
   }
 ]

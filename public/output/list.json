@@ -10176,5 +10176,35 @@
     ],
     "type": "演出现场",
     "key": "演出现场_2025-02-22_海口_音乐节"
+  },
+  {
+    "date": "2025-03-08",
+    "timestamp": 1741392000000,
+    "location": "武汉",
+    "links": [
+      "https://www.bilibili.com/video/BV14iRsYoE4D/?spm_id_from=333.337.search-card.all.click&amp;vd_source=1bf4ec9100ad145d8bda4444308e0281"
+    ],
+    "activity": "美依礼芽演唱会嘉宾",
+    "songs": [
+      "花海",
+      "和宇宙的温柔关联"
+    ],
+    "type": "演出现场",
+    "key": "演出现场_2025-03-08_武汉_美依礼芽演唱会嘉宾"
+  },
+  {
+    "date": "2025-03-13",
+    "timestamp": 1741824000000,
+    "location": "北京",
+    "links": [
+      "https://www.bilibili.com/video/BV1vjQPYuEBh?spm_id_from=333.788.videopod.episodes&amp;vd_source=1bf4ec9100ad145d8bda4444308e0281&amp;p=3"
+    ],
+    "activity": "stylegala风尚之夜",
+    "songs": [
+      "银河迪厅",
+      "今天是星期几"
+    ],
+    "type": "演出现场",
+    "key": "演出现场_2025-03-13_北京_stylegala风尚之夜"
   }
 ]
