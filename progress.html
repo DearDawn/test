@@ -11,6 +11,10 @@
       transition: all 0.5s 0.3s linear;
     }
 
+    body:hover .buttons {
+      opacity: 1;
+    }
+
     .line {
       width: 100%;
       max-width: 1200px;
@@ -101,6 +105,20 @@
       transition: all 0.3s linear;
       z-index: -1;
     }
+
+    .buttons {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      margin-top: 40px;
+      opacity: 0;
+      transition: all 0.3s linear;
+    }
+
+    .buttons button:first-child {
+      margin-right: 10px;
+    }
   </style>
 </head>
 
@@ -143,6 +161,11 @@
       <span class="percent"></span>
     </div>
     <div id="clock"></div>
+    <div class="buttons">
+      难熬？
+      <button onclick="handleGame('pet')">小人向前冲</button>
+      <button onclick="handleGame('fight')">Emoji 大作战</button>
+    </div>
     <canvas id="coinCanvas"></canvas>
     <canvas id="coinMountainCanvas"></canvas>
     <div class="canvasMask"></div>
@@ -242,6 +265,10 @@
       timeStart = new Date().setHours(hour, min, 0, 0);
       initTime();
       updateRender();
+    };
+
+    function handleGame (game = '') {
+      window.open(`/react-apps/${game}`);
     };
 
     const handleEndTimeChange = (target) => {
