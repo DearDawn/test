@@ -10206,5 +10206,89 @@
     ],
     "type": "演出现场",
     "key": "演出现场_2025-03-13_北京_stylegala风尚之夜"
+  },
+  {
+    "date": "2025-03-15",
+    "timestamp": 1741996800000,
+    "location": "徐州",
+    "links": [
+      "https://www.bilibili.com/video/BV1K9QxYWEre/?spm_id_from=333.337.search-card.all.click&amp;vd_source=1bf4ec9100ad145d8bda4444308e0281"
+    ],
+    "activity": "音乐节",
+    "songs": [
+      "银河迪厅",
+      "这是你想要的生活吗",
+      "所念皆星河",
+      "是永不止息的海浪",
+      "城市动物园",
+      "真空",
+      "和宇宙的温柔关联",
+      "少年时",
+      "云烟成雨"
+    ],
+    "type": "演出现场",
+    "key": "演出现场_2025-03-15_徐州_音乐节"
+  },
+  {
+    "date": "2025-03-20",
+    "timestamp": 1742428800000,
+    "location": "上海",
+    "links": [
+      "https://www.bilibili.com/video/BV1vFXeYxEwh/?spm_id_from=333.337.search-card.all.click"
+    ],
+    "activity": "音乐节",
+    "songs": [
+      "银河迪厅",
+      "城市动物园",
+      "这是你想要的生活吗",
+      "真空",
+      "少年时",
+      "云烟成雨",
+      "生日祝福歌"
+    ],
+    "type": "演出现场",
+    "key": "演出现场_2025-03-20_上海_音乐节"
+  },
+  {
+    "date": "2025-03-22",
+    "timestamp": 1742601600000,
+    "location": "鄂州",
+    "links": [
+      "https://www.bilibili.com/video/BV13HoWYKEZo/?spm_id_from=333.1387.homepage.video_card.click&amp;vd_source=1bf4ec9100ad145d8bda4444308e0281"
+    ],
+    "activity": "音乐节",
+    "songs": [
+      "所念皆星河",
+      "下一站茶山刘",
+      "银河迪厅",
+      "城市动物园",
+      "边界",
+      "时间简史",
+      "真空",
+      "下一次",
+      "云烟成雨"
+    ],
+    "type": "演出现场",
+    "key": "演出现场_2025-03-22_鄂州_音乐节"
+  },
+  {
+    "date": "2025-03-23",
+    "timestamp": 1742688000000,
+    "location": "南京",
+    "links": [
+      "https://www.bilibili.com/video/BV1aYoCYbEqg/?spm_id_from=333.337.search-card.all.click&amp;vd_source=1bf4ec9100ad145d8bda4444308e0281"
+    ],
+    "activity": "音乐节",
+    "songs": [
+      "所念皆星河",
+      "躺在凌晨五点半的海岸",
+      "城市动物园",
+      "银河迪厅",
+      "纵情年代",
+      "美好事物",
+      "云烟成雨"
+    ],
+    "type": "演出现场",
+    "key": "演出现场_2025-03-23_南京_音乐节"
   }
 ]
