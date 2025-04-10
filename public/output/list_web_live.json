@@ -610,5 +610,19 @@
     ],
     "type": "网络直播",
     "key": "网络直播_2025-03-07_网易云音乐_房东的猫×网易云 音乐人来了"
+  },
+  {
+    "date": "2025-04-05",
+    "timestamp": 1743811200000,
+    "links": [
+      "https://www.bilibili.com/video/BV1oJRfYiEGp/?spm_id_from=333.1365.list.card_archive.click&amp;vd_source=1bf4ec9100ad145d8bda4444308e0281"
+    ],
+    "location": "微博",
+    "activity": "微博聊天直播",
+    "songs": [
+      "在无常中抛下一个锚点"
+    ],
+    "type": "网络直播",
+    "key": "网络直播_2025-04-05_微博_微博聊天直播"
   }
 ]
