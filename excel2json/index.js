@@ -1,8 +1,9 @@
 const xlsx = require('xlsx');
 const fs = require('fs');
 const path = require('path');
+const { diff, showDiff } = require('./diff');
 
-const excelFilePath = './public/record_250410.xlsx';
+const excelFilePath = './public/record_250505.xlsx';
 
 // 读取Excel文件
 const workbook = xlsx.readFile(excelFilePath, { cellStyles: true });
@@ -80,8 +81,9 @@ const getActivityList = () => {
   const headerMap = {
     演唱歌曲: 'songs',
     时间: 'date',
+    序号: 'order',
     地点: 'location',
-    类型: 'activity',
+    演出类型: 'activity',
   };
 
   const songMap = {};
@@ -146,7 +148,7 @@ const getActivityList = () => {
         } else if (headerKey === headerMap['地点']) {
           rowData[headerKey] = value.trim();
           insertLink(getHyperlink(cell, workbook));
-        } else if (headerKey === headerMap['类型']) {
+        } else if (headerKey === headerMap['演出类型']) {
           rowData[headerKey] = value.trim();
           insertLink(getHyperlink(cell, workbook));
         } else {
@@ -174,6 +176,7 @@ const getActivityList = () => {
     fs.mkdirSync(path.dirname(jsonFilePath));
   }
 
+  diff(fs.readFileSync(jsonFilePath, 'utf8'), results);
   fs.writeFileSync(jsonFilePath, JSON.stringify(results, null, 2));
   console.log('Excel 文件已成功转换为 JSON 文件:', jsonFilePath);
   fs.writeFileSync(jsonFilePathSong, JSON.stringify(songList, null, 2));
@@ -196,6 +199,7 @@ const getShowList = () => {
   const headerMap = {
     演唱歌曲: 'songs',
     播出时间: 'date',
+    序号: 'order',
     播出平台: 'location',
     节目名称: 'activity',
     期数: 'period',
@@ -287,6 +291,7 @@ const getShowList = () => {
     fs.mkdirSync(path.dirname(jsonFilePath));
   }
 
+  diff(fs.readFileSync(jsonFilePath, 'utf8'), results);
   fs.writeFileSync(jsonFilePath, JSON.stringify(results, null, 2));
   console.log('Excel 文件已成功转换为 JSON 文件:', jsonFilePath);
   fs.writeFileSync(jsonFilePathSong, JSON.stringify(songList, null, 2));
@@ -309,6 +314,7 @@ const getWebLiveList = () => {
   const headerMap = {
     演唱歌曲: 'songs',
     直播时间: 'date',
+    序号: 'order',
     直播平台: 'location',
     备注: 'activity',
   };
@@ -403,6 +409,7 @@ const getWebLiveList = () => {
     fs.mkdirSync(path.dirname(jsonFilePath));
   }
 
+  diff(fs.readFileSync(jsonFilePath, 'utf8'), results);
   fs.writeFileSync(jsonFilePath, JSON.stringify(results, null, 2));
   console.log('Excel 文件已成功转换为 JSON 文件:', jsonFilePath);
   fs.writeFileSync(jsonFilePathSong, JSON.stringify(songList, null, 2));
@@ -426,6 +433,7 @@ const getSongInfo = () => {
     顺序: 'sort',
     歌名: 'song',
     发布时间: 'date',
+    序号: 'order',
     翻唱: 'is_cover',
     专辑: 'album',
     作词: 'author_lyrics',
@@ -504,6 +512,7 @@ const getSongInfo = () => {
     fs.mkdirSync(path.dirname(jsonFilePath));
   }
 
+  diff(fs.readFileSync(jsonFilePath, 'utf8'), publishListInfo);
   fs.writeFileSync(jsonFilePath, JSON.stringify(publishListInfo, null, 2));
   console.log('Excel 文件已成功转换为 JSON 文件:', jsonFilePath);
 
@@ -525,6 +534,7 @@ const geVideoInterviewList = () => {
   const headers = rows[0];
   const headerMap = {
     发布时间: 'date',
+    序号: 'order',
     媒体名称: 'location',
     备注: 'activity',
   };
@@ -579,6 +589,7 @@ const geVideoInterviewList = () => {
     fs.mkdirSync(path.dirname(jsonFilePath));
   }
 
+  diff(fs.readFileSync(jsonFilePath, 'utf8'), results);
   fs.writeFileSync(jsonFilePath, JSON.stringify(results, null, 2));
   console.log('Excel 文件已成功转换为 JSON 文件:', jsonFilePath);
 };
@@ -597,6 +608,7 @@ const geTextInterviewList = () => {
   const headers = rows[0];
   const headerMap = {
     发布时间: 'date',
+    序号: 'order',
     发布者: 'location',
     文章标题: 'activity',
   };
@@ -651,6 +663,8 @@ const geTextInterviewList = () => {
     fs.mkdirSync(path.dirname(jsonFilePath));
   }
 
+  diff(fs.readFileSync(jsonFilePath, 'utf8'), results);
+
   fs.writeFileSync(jsonFilePath, JSON.stringify(results, null, 2));
   console.log('Excel 文件已成功转换为 JSON 文件:', jsonFilePath);
 };
@@ -669,6 +683,7 @@ const getBodCastList = () => {
   const headers = rows[0];
   const headerMap = {
     发布时间: 'date',
+    序号: 'order',
     发布者: 'location',
     备注: 'activity',
   };
@@ -722,6 +737,7 @@ const getBodCastList = () => {
     fs.mkdirSync(path.dirname(jsonFilePath));
   }
 
+  diff(fs.readFileSync(jsonFilePath, 'utf8'), results);
   fs.writeFileSync(jsonFilePath, JSON.stringify(results, null, 2));
   console.log('Excel 文件已成功转换为 JSON 文件:', jsonFilePath);
 };
@@ -733,3 +749,4 @@ getWebLiveList();
 geVideoInterviewList();
 geTextInterviewList();
 getBodCastList();
+showDiff();
