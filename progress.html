@@ -117,7 +117,7 @@
       transition: all 0.3s linear;
     }
 
-    .buttons button:first-child {
+    .buttons button {
       margin-right: 10px;
     }
   </style>
@@ -166,6 +166,7 @@
       熬不动？再坚持一下！
       <button onclick="handleGame('pet')">小人向前冲</button>
       <button onclick="handleGame('fight')">Emoji 大作战</button>
+      <button onclick="handleChat()">摸鱼闲聊</button>
     </div>
     <canvas id="coinCanvas"></canvas>
     <canvas id="coinMountainCanvas"></canvas>
@@ -270,6 +271,10 @@
 
     function handleGame (game = '') {
       window.open(`/react-apps/${game}?source=progress`);
+    };
+
+    function handleChat () {
+      window.open(`/react-apps/nine&source=progress`);
     };
 
     const handleEndTimeChange = (target) => {
