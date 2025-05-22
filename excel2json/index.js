@@ -3,7 +3,7 @@ const fs = require('fs');
 const path = require('path');
 const { diff, showDiff } = require('./diff');
 
-const excelFilePath = './public/record_250505.xlsx';
+const excelFilePath = './public/record_250522.xlsx';
 
 // 读取Excel文件
 const workbook = xlsx.readFile(excelFilePath, { cellStyles: true });
