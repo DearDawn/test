@@ -1729,5 +1729,17 @@
     "author_lyrics": "午上",
     "author_arrange": "茶茶/侯志淳",
     "author_produce": "茶茶"
+  },
+  {
+    "order": "145",
+    "song": "山野里的太阳（with大凉山妞妞合唱团）",
+    "is_cover": false,
+    "date": "2025-05-30",
+    "timestamp": 1748563200000,
+    "album": "",
+    "author_compose": "邓舒月",
+    "author_lyrics": "何慧敏",
+    "author_arrange": "周富坚",
+    "author_produce": "周富坚"
   }
 ]
