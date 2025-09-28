@@ -1,5 +1,86 @@
 [
   {
     "name": "3d"
+  },
+  {
+    "name": "ai-robot-v1.0"
+  },
+  {
+    "name": "ai-robot-v1.1"
+  },
+  {
+    "name": "avatar"
+  },
+  {
+    "name": "avatar_v2"
+  },
+  {
+    "name": "avatar_v3"
+  },
+  {
+    "name": "balloon"
+  },
+  {
+    "name": "blender"
+  },
+  {
+    "name": "book"
+  },
+  {
+    "name": "border"
+  },
+  {
+    "name": "coin-mountain"
+  },
+  {
+    "name": "coin"
+  },
+  {
+    "name": "csv2json"
+  },
+  {
+    "name": "desk"
+  },
+  {
+    "name": "domToImage"
+  },
+  {
+    "name": "eye"
+  },
+  {
+    "name": "fullscreen"
+  },
+  {
+    "name": "juejin"
+  },
+  {
+    "name": "mountain"
+  },
+  {
+    "name": "preview"
+  },
+  {
+    "name": "progress"
+  },
+  {
+    "name": "pulldown"
+  },
+  {
+    "name": "removebg"
+  },
+  {
+    "name": "rtc"
+  },
+  {
+    "name": "snow"
+  },
+  {
+    "name": "svg"
+  },
+  {
+    "name": "svg2png"
+  },
+  {
+    "name": "temp"
   }
 ]
