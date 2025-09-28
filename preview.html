@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>简易文件内容查看器</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', system-ui, sans-serif;
+    }
+
+    body {
+      background: #f0f2f5;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+      line-height: 1.6;
+    }
+
+    .container {
+      background: white;
+      width: 100%;
+      max-width: 800px;
+      border-radius: 10px;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+      overflow: hidden;
+    }
+
+    header {
+      background: #4285f4;
+      color: white;
+      padding: 20px;
+      text-align: center;
+    }
+
+    h1 {
+      font-size: 1.8rem;
+      margin-bottom: 8px;
+    }
+
+    .subtitle {
+      font-size: 1.1rem;
+      opacity: 0.9;
+    }
+
+    .main-content {
+      padding: 25px;
+    }
+
+    .file-section {
+      margin-bottom: 25px;
+      padding: 20px;
+      background: #f8f9fa;
+      border-radius: 8px;
+      border: 1px solid #e0e0e0;
+    }
+
+    .file-input-container {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+
+    .file-input-label {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 20px;
+      background: #e8f0fe;
+      border: 2px dashed #4285f4;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .file-input-label:hover {
+      background: #d2e3fc;
+    }
+
+    .file-input-label i {
+      font-size: 24px;
+      color: #4285f4;
+    }
+
+    .file-input {
+      display: none;
+    }
+
+    .file-info {
+      display: none;
+      padding: 15px;
+      background: #e8f0fe;
+      border-radius: 6px;
+      margin-top: 15px;
+    }
+
+    .file-info.active {
+      display: block;
+    }
+
+    .file-info p {
+      margin: 8px 0;
+      color: #333;
+    }
+
+    .content-section {
+      margin-top: 20px;
+      display: none;
+    }
+
+    .content-section.active {
+      display: block;
+    }
+
+    .content-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .content-header h2 {
+      color: #4285f4;
+      font-size: 1.4rem;
+    }
+
+    .copy-btn {
+      background: #4285f4;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 6px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 1rem;
+      transition: background 0.2s;
+    }
+
+    .copy-btn:hover {
+      background: #3367d6;
+    }
+
+    .content-display {
+      background: #f8f9fa;
+      color: #333;
+      border-radius: 6px;
+      padding: 20px;
+      min-height: 200px;
+      max-height: 400px;
+      overflow-y: auto;
+      font-family: 'Courier New', monospace;
+      white-space: pre-wrap;
+      line-height: 1.5;
+      border: 1px solid #e0e0e0;
+      word-break: break-all;
+    }
+
+    .notification {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: #34a853;
+      color: white;
+      padding: 12px 20px;
+      border-radius: 6px;
+      box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      opacity: 0;
+      transform: translateY(20px);
+      transition: all 0.3s ease;
+    }
+
+    .notification.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .instructions {
+      margin-top: 25px;
+      padding: 15px;
+      background: #f1f8e9;
+      border-left: 4px solid #7cb342;
+      border-radius: 0 6px 6px 0;
+    }
+
+    .instructions h3 {
+      color: #2e7d32;
+      margin-bottom: 10px;
+    }
+
+    .instructions ul {
+      padding-left: 20px;
+    }
+
+    .instructions li {
+      margin: 8px 0;
+    }
+
+    footer {
+      text-align: center;
+      padding: 20px;
+      color: #5f6368;
+      font-size: 0.9rem;
+      border-top: 1px solid #e0e0e0;
+    }
+
+    @media (max-width: 600px) {
+      h1 {
+        font-size: 1.5rem;
+      }
+
+      .main-content {
+        padding: 15px;
+      }
+
+      .content-header {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .copy-btn {
+        width: 100%;
+        justify-content: center;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <header>
+      <h1>简易文件内容查看器</h1>
+      <p class="subtitle">选择文件查看内容并复制文本</p>
+    </header>
+
+    <div class="main-content">
+      <div class="file-section">
+        <div class="file-input-container">
+          <label class="file-input-label" for="fileInput">
+            <i>📁</i>
+            <span>选择文件或拖放文件到此处</span>
+          </label>
+          <input type="file" id="fileInput" class="file-input">
+        </div>
+
+        <div class="file-info" id="fileInfo">
+          <p><strong>已选文件:</strong> <span id="fileName"></span></p>
+          <p><strong>文件大小:</strong> <span id="fileSize"></span></p>
+          <p><strong>文件类型:</strong> <span id="fileType"></span></p>
+        </div>
+      </div>
+
+      <div class="content-section" id="contentSection">
+        <div class="content-header">
+          <h2>文件内容</h2>
+          <button class="copy-btn" id="copyBtn">
+            <i>📋</i>
+            <span>复制全部内容</span>
+          </button>
+        </div>
+        <div class="content-display" id="contentDisplay">
+          <!-- 文件内容将在这里显示 -->
+        </div>
+      </div>
+
+      <div class="instructions">
+        <h3>使用说明：</h3>
+        <ul>
+          <li>点击上方区域或使用拖放功能选择文件</li>
+          <li>支持任何类型的文件（非文本文件可能显示乱码）</li>
+          <li>文件内容将显示在下方区域</li>
+          <li>点击"复制全部内容"按钮复制文本</li>
+          <li>最大支持文件大小：10MB</li>
+        </ul>
+      </div>
+    </div>
+
+    <footer>
+      <p>文件内容查看器 | 本地处理，不上传任何文件</p>
+    </footer>
+  </div>
+
+  <div class="notification" id="notification">
+    <i>✅</i>
+    <span>内容已成功复制到剪贴板！</span>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const fileInput = document.getElementById('fileInput');
+      const fileInfo = document.getElementById('fileInfo');
+      const fileName = document.getElementById('fileName');
+      const fileSize = document.getElementById('fileSize');
+      const fileType = document.getElementById('fileType');
+      const contentSection = document.getElementById('contentSection');
+      const contentDisplay = document.getElementById('contentDisplay');
+      const copyBtn = document.getElementById('copyBtn');
+      const notification = document.getElementById('notification');
+
+      // 点击标签触发文件选择
+      fileInput.addEventListener('change', handleFileSelect);
+
+      // 拖放功能
+      const dropArea = document.querySelector('.file-input-label');
+      dropArea.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        dropArea.style.backgroundColor = '#d2e3fc';
+      });
+
+      dropArea.addEventListener('dragleave', () => {
+        dropArea.style.backgroundColor = '#e8f0fe';
+      });
+
+      dropArea.addEventListener('drop', (e) => {
+        e.preventDefault();
+        dropArea.style.backgroundColor = '#e8f0fe';
+
+        if (e.dataTransfer.files.length) {
+          handleFile(e.dataTransfer.files[0]);
+        }
+      });
+
+      // 处理文件选择
+      function handleFileSelect (e) {
+        if (fileInput.files.length) {
+          handleFile(fileInput.files[0]);
+        }
+      }
+
+      // 处理文件
+      function handleFile (file) {
+        // 检查文件大小（10MB限制）
+        if (file.size > 10 * 1024 * 1024) {
+          alert('文件大小超过10MB限制');
+          return;
+        }
+
+        // 显示文件信息
+        fileName.textContent = file.name;
+        fileSize.textContent = formatFileSize(file.size);
+        fileType.textContent = file.type || '未知类型';
+        fileInfo.classList.add('active');
+
+        // 读取文件内容
+        const reader = new FileReader();
+
+        reader.onload = function (e) {
+          contentDisplay.textContent = e.target.result;
+          contentSection.classList.add('active');
+
+          // 滚动到内容区域
+          contentSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        };
+
+        reader.onerror = function () {
+          contentDisplay.textContent = '无法读取文件内容';
+          contentSection.classList.add('active');
+        };
+
+        // 读取为文本（对非文本文件可能会产生乱码）
+        reader.readAsText(file);
+      }
+
+      // 复制内容到剪贴板
+      copyBtn.addEventListener('click', () => {
+        if (!contentDisplay.textContent.trim()) {
+          showNotification('内容为空，无法复制', false);
+          return;
+        }
+
+        navigator.clipboard.writeText(contentDisplay.textContent)
+          .then(() => {
+            showNotification('内容已成功复制到剪贴板！', true);
+          })
+          .catch(err => {
+            console.error('复制失败:', err);
+            showNotification('复制失败，请手动选择内容复制', false);
+          });
+      });
+
+      // 显示通知
+      function showNotification (message, isSuccess) {
+        notification.innerHTML = `<i>${isSuccess ? '✅' : '⚠️'}</i> <span>${message}</span>`;
+        notification.style.background = isSuccess ? '#34a853' : '#ea4335';
+        notification.classList.add('show');
+
+        setTimeout(() => {
+          notification.classList.remove('show');
+        }, 3000);
+      }
+
+      // 格式化文件大小
+      function formatFileSize (bytes) {
+        if (bytes === 0) return '0 Bytes';
+        const k = 1024;
+        const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+        const i = Math.floor(Math.log(bytes) / Math.log(k));
+        return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+      }
+    });
+  </script>
+</body>
+
+</html>
