@@ -95,11 +95,6 @@
       z-index: 1;
     }
 
-    li {
-      margin-bottom: 1.2rem;
-      position: relative;
-    }
-
     .highlight {
       background-color: rgba(255, 235, 59, 0.3);
       padding: 0.5rem 1.2rem;
@@ -215,37 +210,6 @@
       border-radius: 1rem;
       margin: 1rem 0;
     }
-
-    @media (max-width: 768px) {
-      html {
-        font-size: 1vw;
-      }
-
-      .container {
-        padding: 4rem 3rem;
-        width: 95%;
-        height: auto;
-      }
-
-      h1 {
-        font-size: 8rem;
-      }
-
-      h2 {
-        font-size: 5rem;
-      }
-
-      p,
-      ul,
-      ol {
-        font-size: 3.5rem;
-      }
-
-      .actions {
-        flex-direction: column;
-        gap: 1.5rem;
-      }
-    }
   </style>
 </head>
 
@@ -267,16 +231,16 @@
       </thead>
       <tbody>
         <tr>
+          <td><strong>现金红包</strong></td>
+          <td>277元</td>
+          <td>177元</td>
+          <td>77元</td>
+        </tr>
+        <!-- <tr>
           <td><strong>小裙子</strong></td>
           <td>3套</td>
           <td>2套</td>
           <td>1套</td>
-        </tr>
-        <tr>
-          <td><strong>现金红包</strong></td>
-          <td>1314元</td>
-          <td>777元</td>
-          <td>520元</td>
         </tr>
         <tr>
           <td><strong>鹿晗演唱会</strong></td>
@@ -295,16 +259,16 @@
           <td>两套高定</td>
           <td>一套高定一套普通</td>
           <td>一套普通</td>
-        </tr>
+        </tr> -->
       </tbody>
     </table>
 
     <h2>✨ 特殊奖项规则</h2>
     <ol class="bg">
-      <li><strong>幸运奖</strong>: 摇骰子，摇到几点即得几十元（例如摇到3得30元）。</li>
-      <li><strong>全家桶</strong>: 一、二、三等奖打包带走。</li>
-      <li><strong>自助餐</strong>: 请一顿自助餐</li>
-      <li><strong>猫屎运</strong>: 掷硬币，正面额外获得一张卡。反面当前刮刮卡作废</li>
+      <div><strong>1. 幸运奖</strong>: 摇骰子，摇到几点即得几十元（例如摇到3得30元）。</div>
+      <div><strong>2. 全家桶</strong>: 一、二、三等奖打包带走。</div>
+      <div><strong>3. 自助餐</strong>: 请一顿自助餐</div>
+      <div><strong>4. 猫屎运</strong>: 掷硬币，正面额外获得一张卡。反面当前卡片作废。</div>
     </ol>
   </div>
   <div class="actions">
