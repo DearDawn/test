@@ -17,7 +17,7 @@
     }
 
     html {
-      font-size: min(0.5vw, 4.5px);
+      font-size: 4.5px;
       color: #1f2129;
       font-family: mhj;
       text-align: center;
@@ -36,24 +36,23 @@
     .container {
       width: 100rem;
       height: 148rem;
-      max-width: 90%;
       background: url('./public/images/dog04.jpg') center center / cover;
       backdrop-filter: blur(5px);
       padding: 5rem 4rem;
       margin-top: 2rem;
       position: relative;
       overflow: hidden;
-    }
+      flex: none;
 
-    .container::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(255, 255, 255, 0.3);
-      z-index: 0;
+      .mask {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(255, 255, 255, 0.3);
+        z-index: 0;
+      }
     }
 
     h1 {
@@ -215,6 +214,7 @@
 
 <body>
   <div class="container">
+    <div class="mask"></div>
     <h1>耶耶刮刮卡规则介绍</h1>
 
     <h2>🎲 基础奖项规则</h2>
