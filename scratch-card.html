@@ -472,7 +472,7 @@
           saveBtn.addEventListener('click', function () {
             // 使用html2canvas捕获.app元素
             html2canvas(document.querySelector('.app'), {
-              scale: devicePixelRatio, // 提高分辨率
+              scale: devicePixelRatio * 2, // 提高分辨率
               useCORS: true, // 允许跨域图片
               backgroundColor: null, // 透明背景
             })
