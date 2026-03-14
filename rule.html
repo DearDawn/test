@@ -286,7 +286,7 @@
         saveBtn.addEventListener('click', function () {
           // 使用html2canvas捕获.container元素
           html2canvas(document.querySelector('.container'), {
-            scale: 1, // 提高分辨率
+            scale: devicePixelRatio, // 提高分辨率
             useCORS: true, // 允许跨域图片
             backgroundColor: null, // 透明背景
             logging: false // 关闭日志
