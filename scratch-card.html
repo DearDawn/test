@@ -277,6 +277,24 @@
       .box-wrap .box {
         flex-direction: column;
         gap: 0.5rem;
+        position: relative;
+
+        &.active {
+          &::after {
+            opacity: 0;
+          }
+        }
+        &::after {
+          content: '';
+          width: 100%;
+          height: 100%;
+          position: absolute;
+          top: 0;
+          left: 0;
+          background-color: #777;
+          z-index: 2;
+          cursor: pointer;
+        }
       }
 
       .box-wrap .box img {
@@ -437,6 +455,9 @@
             box.appendChild(img);
             box.appendChild(text);
             container.appendChild(box);
+            box.onclick = () => {
+              box.classList.add('active');
+            };
           });
         }
 
