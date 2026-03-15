@@ -1,537 +1,533 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta
-      name="viewport"
-      content="width=device-width, initial-scale=1.0"
-    />
-    <title>刮刮卡</title>
-    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
-  </head>
 
-  <body>
-    <div class="app">
-      <img
-        id="bgImage"
-        class="bg"
-        style="top: -22rem"
-      />
-      <div class="header">
-        <div class="stroke">耶耶刮刮卡</div>
-        <div>耶耶刮刮卡</div>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>刮刮卡</title>
+  <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+</head>
+
+<body>
+  <div class="app">
+    <img id="bgImage" class="bg" style="top: -22rem" />
+    <div class="header">
+      <div class="stroke">耶耶刮刮卡</div>
+      <div>耶耶刮刮卡</div>
+    </div>
+    <div class="content">
+      <div class="preview" id="previewContainer">
+        <!-- 预览区将由JavaScript动态生成 -->
       </div>
-      <div class="content">
-        <div
-          class="preview"
-          id="previewContainer"
-        >
-          <!-- 预览区将由JavaScript动态生成 -->
-        </div>
-        <div
-          class="box-wrap"
-          id="boxContainer"
-        >
-          <!-- 奖项格子将由JavaScript动态生成 -->
-        </div>
+      <div class="box-wrap" id="boxContainer">
+        <!-- 奖项格子将由JavaScript动态生成 -->
       </div>
     </div>
-    <div class="actions">
-      <button id="saveBtn">保存为图片</button>
-      <a
-        href="rule.html"
-        class="rule-link"
-      >
-        查看规则
-      </a>
-    </div>
-    <div
-      class="bg-preview"
-      id="bgPreview"
-    >
-      <!-- 背景图片预览将由JavaScript动态生成 -->
-    </div>
-    <style>
-      @font-face {
-        font-family: 'mhj';
-        src: url('./public/font/xiangqiaolaiwanlingganti.ttf');
+  </div>
+  <div class="actions">
+    <button id="saveBtn">保存为图片</button>
+    <a href="rule.html" class="rule-link">
+      查看规则
+    </a>
+  </div>
+  <div class="bg-preview" id="bgPreview">
+    <!-- 背景图片预览将由JavaScript动态生成 -->
+  </div>
+  <style>
+    @font-face {
+      font-family: 'mhj';
+      src: url('./public/font/xiangqiaolaiwanlingganti.ttf');
+    }
+
+    html {
+      font-size: 4.5px;
+      color: #1f2129;
+      font-family: mhj;
+      text-align: center;
+
+      * {
+        box-sizing: border-box;
+      }
+    }
+
+    html,
+    body {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+    }
+
+    .app {
+      width: 100rem;
+      height: 148rem;
+      position: relative;
+      margin: 2rem auto;
+      /* outline: 1px solid; */
+      overflow: hidden;
+      flex: none;
+
+      .bg {
+        width: 100%;
+        position: absolute;
+        display: block;
+        top: 0;
+        left: 0;
+        z-index: -2;
       }
 
-      html {
-        font-size: 4.5px;
-        color: #1f2129;
-        font-family: mhj;
-        text-align: center;
-
-        * {
-          box-sizing: border-box;
-        }
-      }
-
-      html,
-      body {
+      &::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
         width: 100%;
         height: 100%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        flex-direction: column;
+        background-color: rgba(0, 0, 0, 0.02);
+        z-index: -1;
       }
+    }
 
-      .app {
-        width: 100rem;
-        height: 148rem;
+    .header {
+      width: 100rem;
+      height: 30rem;
+      margin: auto;
+      font-size: 10rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+
+      div {
         position: relative;
-        margin: 2rem auto;
-        /* outline: 1px solid; */
-        overflow: hidden;
-        flex: none;
-
-        .bg {
-          width: 100%;
-          position: absolute;
-          display: block;
-          top: 0;
-          left: 0;
-          z-index: -2;
-        }
-
-        &::after {
-          content: '';
-          position: absolute;
-          top: 0;
-          left: 0;
-          width: 100%;
-          height: 100%;
-          background-color: rgba(0, 0, 0, 0.02);
-          z-index: -1;
-        }
+        z-index: 2;
       }
 
-      .header {
-        width: 100rem;
-        height: 30rem;
+      .stroke {
+        -webkit-text-stroke: #fff 2rem;
+        position: absolute;
+        inset: 0;
         margin: auto;
-        font-size: 10rem;
+        height: fit-content;
+        z-index: 1;
+      }
+    }
+
+    .content {
+      width: 100%;
+      margin-bottom: 2rem;
+
+      .preview,
+      .box-wrap {
+        width: 70rem;
+        margin: auto;
+        box-sizing: border-box;
+      }
+
+      .preview {
         display: flex;
         align-items: center;
         justify-content: center;
-        position: relative;
-
-        .stroke {
-          -webkit-text-stroke: #fff 2rem;
-          position: absolute;
-          inset: 0;
-          margin: auto;
-          height: fit-content;
-          z-index: -1;
-        }
-      }
-
-      .content {
-        width: 100%;
         margin-bottom: 2rem;
+        color: #1f2129;
+        gap: 2rem;
+        font-size: 7rem;
 
-        .preview,
-        .box-wrap {
-          width: 70rem;
-          margin: auto;
-          box-sizing: border-box;
-        }
-
-        .preview {
+        .box {
+          flex: 1;
           display: flex;
           align-items: center;
           justify-content: center;
-          margin-bottom: 2rem;
-          color: #1f2129;
-          gap: 2rem;
-          font-size: 7rem;
-
-          .box {
-            flex: 1;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background-color: rgba(255, 255, 255, 0.8);
-            backdrop-filter: blur(2px);
-            padding: 1rem 0 0;
-            border-radius: 1rem;
-            flex-direction: column;
-            gap: 0.5rem;
-          }
-
-          .box img {
-            width: 10rem;
-            height: 10rem;
-            object-fit: cover;
-            border-radius: 0.5rem;
-            margin: 0 0.5rem;
-            filter: drop-shadow(0 0 0.5px rgba(0, 0, 0, 0.8));
-            opacity: 0.5;
-          }
-
-          .box span {
-            font-size: 4.6rem;
-            line-height: 1.2;
-          }
-        }
-
-        .box-wrap {
-          display: flex;
-          flex-wrap: wrap;
-          align-items: center;
-          padding: 2rem;
-          border-radius: 1rem;
-          gap: 2rem;
-          font-size: 5rem;
           background-color: rgba(255, 255, 255, 0.8);
-          backdrop-filter: blur(1px);
+          backdrop-filter: blur(2px);
+          padding: 1rem 0 0;
+          border-radius: 1rem;
+          flex-direction: column;
+          gap: 0.5rem;
+        }
 
-          .box {
-            width: 15rem;
-            height: 15rem;
-            background-color: rgba(0, 0, 0, 0.25);
-            flex: none;
-            border-radius: 1rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #fff;
-          }
+        .box img {
+          width: 10rem;
+          height: 10rem;
+          object-fit: cover;
+          border-radius: 0.5rem;
+          margin: 0 0.5rem;
+          filter: drop-shadow(0 0 0.5px rgba(0, 0, 0, 0.8));
+          opacity: 0.5;
+        }
+
+        .box span {
+          font-size: 4.6rem;
+          line-height: 1.2;
         }
       }
 
-      .actions {
-        margin-top: 2rem;
-        text-align: center;
-        display: flex;
-        gap: 2rem;
-        justify-content: center;
-        align-items: center;
-      }
-
-      #saveBtn {
-        font-size: 4rem;
-        padding: 1rem 3rem;
-        background-color: #4caf50;
-        color: white;
-        border: none;
-        border-radius: 0.5rem;
-        cursor: pointer;
-        font-family: mhj;
-        transition: background-color 0.3s;
-      }
-
-      #saveBtn:hover {
-        background-color: #45a049;
-      }
-
-      .rule-link {
-        font-size: 4rem;
-        padding: 1rem 3rem;
-        background-color: #2196f3;
-        color: white;
-        text-decoration: none;
-        border-radius: 0.5rem;
-        font-family: mhj;
-        transition: background-color 0.3s;
-        display: inline-block;
-      }
-
-      .rule-link:hover {
-        background-color: #0b7dda;
-      }
-
-      .bg-preview {
+      .box-wrap {
         display: flex;
         flex-wrap: wrap;
-        justify-content: center;
-        gap: 1rem;
-        margin-top: 2rem;
-      }
+        align-items: center;
+        padding: 2rem;
+        border-radius: 1rem;
+        gap: 2rem;
+        font-size: 5rem;
+        background-color: rgba(255, 255, 255, 0.8);
+        backdrop-filter: blur(1px);
 
-      .bg-preview-item {
-        width: 10rem;
-        height: 10rem;
-        background-size: cover;
-        background-position: center;
-        border-radius: 0.5rem;
-        cursor: pointer;
-        border: 2px solid transparent;
-        transition:
-          border-color 0.3s,
-          transform 0.3s;
-      }
-
-      .bg-preview-item:hover {
-        transform: scale(1.05);
-      }
-
-      .bg-preview-item.selected {
-        border-color: #4caf50;
-        box-shadow: 0 0 10px rgba(76, 175, 80, 0.5);
-      }
-
-      /* 奖项格子内图标和文本的样式 */
-      .box-wrap .box {
-        flex-direction: column;
-        gap: 0.5rem;
-        position: relative;
-
-        &.active {
-          &::after {
-            opacity: 0;
-          }
+        .box {
+          width: 15rem;
+          height: 15rem;
+          background-color: rgba(0, 0, 0, 0.25);
+          flex: none;
+          border-radius: 1rem;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          color: #fff;
         }
+      }
+    }
+
+    .actions {
+      margin-top: 2rem;
+      text-align: center;
+      display: flex;
+      gap: 2rem;
+      justify-content: center;
+      align-items: center;
+    }
+
+    #saveBtn {
+      font-size: 4rem;
+      padding: 1rem 3rem;
+      background-color: #4caf50;
+      color: white;
+      border: none;
+      border-radius: 0.5rem;
+      cursor: pointer;
+      font-family: mhj;
+      transition: background-color 0.3s;
+    }
+
+    #saveBtn:hover {
+      background-color: #45a049;
+    }
+
+    .rule-link {
+      font-size: 4rem;
+      padding: 1rem 3rem;
+      background-color: #2196f3;
+      color: white;
+      text-decoration: none;
+      border-radius: 0.5rem;
+      font-family: mhj;
+      transition: background-color 0.3s;
+      display: inline-block;
+    }
+
+    .rule-link:hover {
+      background-color: #0b7dda;
+    }
+
+    .bg-preview {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 1rem;
+      margin-top: 2rem;
+    }
+
+    .bg-preview-item {
+      width: 10rem;
+      height: 10rem;
+      background-size: cover;
+      background-position: center;
+      border-radius: 0.5rem;
+      cursor: pointer;
+      border: 2px solid transparent;
+      transition:
+        border-color 0.3s,
+        transform 0.3s;
+    }
+
+    .bg-preview-item:hover {
+      transform: scale(1.05);
+    }
+
+    .bg-preview-item.selected {
+      border-color: #4caf50;
+      box-shadow: 0 0 10px rgba(76, 175, 80, 0.5);
+    }
+
+    /* 奖项格子内图标和文本的样式 */
+    .box-wrap .box {
+      flex-direction: column;
+      gap: 0.5rem;
+      position: relative;
+
+      &.active {
         &::after {
-          content: '';
-          width: 100%;
-          height: 100%;
-          position: absolute;
-          top: 0;
-          left: 0;
-          background-color: #777;
-          z-index: 2;
-          cursor: pointer;
+          opacity: 0;
         }
       }
 
-      .box-wrap .box img {
-        width: 8rem;
-        height: 8rem;
-        object-fit: cover;
-        border-radius: 0.5rem;
-        margin-bottom: 0.5rem;
-        filter: drop-shadow(0 0 0.5px rgba(0, 0, 0, 0.8));
+      &::after {
+        content: '';
+        width: 100%;
+        height: 100%;
+        position: absolute;
+        top: 0;
+        left: 0;
+        background-color: #777;
+        z-index: 2;
+        cursor: pointer;
+      }
+    }
+
+    .box-wrap .box img {
+      width: 8rem;
+      height: 8rem;
+      object-fit: cover;
+      border-radius: 0.5rem;
+      margin-bottom: 0.5rem;
+      filter: drop-shadow(0 0 0.5px rgba(0, 0, 0, 0.8));
+    }
+
+    .box-wrap .box span {
+      font-size: 3rem;
+      line-height: 1.2;
+    }
+  </style>
+  <script>
+    (function () {
+      // 背景图片数组（可以扩展）
+      const bgImages = [
+        { src: './public/images/dog01.jpg', top: '-22rem' },
+        { src: './public/images/dog03.jpg', top: '-22rem' },
+        { src: './public/images/dog04.jpg', top: '0rem' },
+        { src: './public/images/dog06.jpg', top: '-22rem' },
+        { src: './public/images/dog07.jpg', top: '-22rem' },
+        { src: './public/images/dog08.jpg', top: '-20rem' },
+        { src: './public/images/dog09.jpg', top: '0rem' },
+        { src: './public/images/dog10.jpg', top: '-1rem' },
+      ];
+      // 奖项构成：每个奖项的名称、图片URL、颜色和数量
+      const prizes = [
+        {
+          name: '一等奖￥277',
+          pieceName: '碎片*1',
+          iconUrl: './public/images/maomi.png',
+          color: '#fff',
+          count: 4,
+        },
+        {
+          name: '二等奖￥177',
+          pieceName: '碎片*1',
+          iconUrl: './public/images/yiwu.png',
+          color: '#fff',
+          count: 4,
+        },
+        {
+          name: '三等奖￥77',
+          pieceName: '碎片*1',
+          iconUrl: './public/images/maoxianqiu.png',
+          color: '#fff',
+          count: 4,
+        },
+        {
+          pieceName: '幸运奖',
+          iconUrl: './public/images/huaer.png',
+          color: '#fff',
+          count: 1,
+        },
+        {
+          pieceName: '全家桶',
+          iconUrl: './public/images/jiangbei.png',
+          color: '#fff',
+          count: 1,
+        },
+        {
+          pieceName: '自助餐',
+          iconUrl: './public/images/guantou.png',
+          color: '#fff',
+          count: 1,
+        },
+        {
+          pieceName: '猫屎运',
+          iconUrl: './public/images/便便.png',
+          color: '#fff',
+          count: 1,
+        },
+      ];
+
+      // 设置背景图片
+      function setBackground (index) {
+        const bgImage = document.getElementById('bgImage');
+        const selected = bgImages[index];
+        bgImage.src = selected.src;
+        bgImage.style.top = selected.top;
+        renderPrizes();
       }
 
-      .box-wrap .box span {
-        font-size: 3rem;
-        line-height: 1.2;
-      }
-    </style>
-    <script>
-      (function () {
-        // 背景图片数组（可以扩展）
-        const bgImages = [
-          { src: './public/images/dog01.jpg', top: '-22rem' },
-          { src: './public/images/dog03.jpg', top: '-22rem' },
-          { src: './public/images/dog04.jpg', top: '0rem' },
-          { src: './public/images/dog06.jpg', top: '-22rem' },
-          { src: './public/images/dog07.jpg', top: '-22rem' },
-          { src: './public/images/dog08.jpg', top: '-20rem' },
-          { src: './public/images/dog09.jpg', top: '0rem' },
-          { src: './public/images/dog10.jpg', top: '-1rem' },
-        ];
-        // 奖项构成：每个奖项的名称、图片URL、颜色和数量
-        const prizes = [
-          {
-            name: '一等奖￥277',
-            pieceName: '碎片*1',
-            iconUrl: './public/images/maomi.png',
-            color: '#fff',
-            count: 4,
-          },
-          {
-            name: '二等奖￥177',
-            pieceName: '碎片*1',
-            iconUrl: './public/images/yiwu.png',
-            color: '#fff',
-            count: 4,
-          },
-          {
-            name: '三等奖￥77',
-            pieceName: '碎片*1',
-            iconUrl: './public/images/maoxianqiu.png',
-            color: '#fff',
-            count: 4,
-          },
-          {
-            pieceName: '幸运奖',
-            iconUrl: './public/images/huaer.png',
-            color: '#fff',
-            count: 1,
-          },
-          {
-            pieceName: '全家桶',
-            iconUrl: './public/images/jiangbei.png',
-            color: '#fff',
-            count: 1,
-          },
-          {
-            pieceName: '自助餐',
-            iconUrl: './public/images/guantou.png',
-            color: '#fff',
-            count: 1,
-          },
-          {
-            pieceName: '猫屎运',
-            iconUrl: './public/images/便便.png',
-            color: '#fff',
-            count: 1,
-          },
-        ];
-
-        // 设置背景图片
-        function setBackground(index) {
-          const bgImage = document.getElementById('bgImage');
-          const selected = bgImages[index];
-          bgImage.src = selected.src;
-          bgImage.style.top = selected.top;
-          renderPrizes();
-        }
-
-        // 生成奖项格子数组
-        function generatePrizeArray() {
-          let prizeArray = [];
-          prizes.forEach((prize) => {
-            for (let i = 0; i < prize.count; i++) {
-              prizeArray.push({ ...prize });
-            }
-          });
-          // 随机打乱数组
-          for (let i = prizeArray.length - 1; i > 0; i--) {
-            const j = Math.floor(Math.random() * (i + 1));
-            [prizeArray[i], prizeArray[j]] = [prizeArray[j], prizeArray[i]];
+      // 生成奖项格子数组
+      function generatePrizeArray () {
+        let prizeArray = [];
+        prizes.forEach((prize) => {
+          for (let i = 0; i < prize.count; i++) {
+            prizeArray.push({ ...prize });
           }
-          return prizeArray;
+        });
+        // 随机打乱数组
+        for (let i = prizeArray.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [prizeArray[i], prizeArray[j]] = [prizeArray[j], prizeArray[i]];
         }
+        return prizeArray;
+      }
 
-        // 渲染预览区
-        function renderPreview() {
-          const container = document.getElementById('previewContainer');
-          if (!container) return;
-          container.innerHTML = '';
-          // 只显示前三个奖项（一等奖、二等奖、三等奖）
-          const previewPrizes = prizes.slice(0, 3);
-          previewPrizes.forEach((prize) => {
-            const box = document.createElement('div');
-            box.className = 'box';
-            // 创建标题
-            const title = document.createElement('span');
-            title.textContent = prize.name;
-            // 创建图标容器
-            const icons = document.createElement('span');
-            for (let i = 0; i < 3; i++) {
-              const img = document.createElement('img');
-              img.src = prize.iconUrl;
-              img.alt = prize.name;
-              img.style.width = '6rem';
-              img.style.height = '6rem';
-              img.style.objectFit = 'cover';
-              img.style.borderRadius = '0.5rem';
-              icons.appendChild(img);
-            }
-            // 将标题和图标放入盒子
-            box.appendChild(title);
-            box.appendChild(icons);
-            container.appendChild(box);
-          });
-        }
-
-        // 渲染奖项格子
-        function renderPrizes() {
-          const container = document.getElementById('boxContainer');
-          container.innerHTML = '';
-          const prizeArray = generatePrizeArray();
-          prizeArray.forEach((prize) => {
-            const box = document.createElement('div');
-            box.className = 'box';
-            // 创建图片元素
+      // 渲染预览区
+      function renderPreview () {
+        const container = document.getElementById('previewContainer');
+        if (!container) return;
+        container.innerHTML = '';
+        // 只显示前三个奖项（一等奖、二等奖、三等奖）
+        const previewPrizes = prizes.slice(0, 3);
+        previewPrizes.forEach((prize) => {
+          const box = document.createElement('div');
+          box.className = 'box';
+          // 创建标题
+          const title = document.createElement('span');
+          title.textContent = prize.name;
+          // 创建图标容器
+          const icons = document.createElement('span');
+          for (let i = 0; i < 3; i++) {
             const img = document.createElement('img');
             img.src = prize.iconUrl;
             img.alt = prize.name;
-            img.style.width = '8rem';
-            img.style.height = '8rem';
+            img.style.width = '6rem';
+            img.style.height = '6rem';
             img.style.objectFit = 'cover';
             img.style.borderRadius = '0.5rem';
-            // 创建文本元素
-            const text = document.createElement('span');
-            text.textContent = prize.pieceName;
-            text.style.color = prize.color;
-            text.style.fontSize = '3rem';
-            // 将图片和文本放入盒子
-            box.appendChild(img);
-            box.appendChild(text);
-            container.appendChild(box);
-            box.onclick = () => {
-              box.classList.add('active');
-            };
-          });
-        }
-
-        // 设置背景图片预览
-        function setupBackgroundPreview() {
-          const previewContainer = document.getElementById('bgPreview');
-          if (!previewContainer) return;
-          previewContainer.innerHTML = '';
-          bgImages.forEach((bg, index) => {
-            const preview = document.createElement('div');
-            preview.className = 'bg-preview-item';
-            preview.style.backgroundImage = `url(${bg.src})`;
-            preview.addEventListener('click', () => {
-              setBackground(index);
-              // 移除其他选中状态
-              document.querySelectorAll('.bg-preview-item').forEach((item) => {
-                item.classList.remove('selected');
-              });
-              preview.classList.add('selected');
-            });
-            previewContainer.appendChild(preview);
-          });
-          // 默认选中第一个
-          if (previewContainer.firstChild) {
-            previewContainer.firstChild.classList.add('selected');
+            icons.appendChild(img);
           }
-        }
+          // 将标题和图标放入盒子
+          box.appendChild(title);
+          box.appendChild(icons);
+          container.appendChild(box);
+        });
+      }
 
-        // 设置保存按钮事件
-        function setupSaveButton() {
-          const saveBtn = document.getElementById('saveBtn');
-          if (!saveBtn) return;
-          saveBtn.addEventListener('click', function () {
-            // 使用html2canvas捕获.app元素
-            html2canvas(document.querySelector('.app'), {
-              scale: devicePixelRatio * 2, // 提高分辨率
-              useCORS: true, // 允许跨域图片
-              backgroundColor: null, // 透明背景
-            })
-              .then((canvas) => {
-                // 将canvas转换为图片URL
-                const imgData = canvas.toDataURL('image/png');
-                // 创建下载链接
-                const link = document.createElement('a');
-                link.href = imgData;
-                link.download = '刮刮卡_' + new Date().getTime() + '.png';
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
-              })
-              .catch((error) => {
-                console.error('保存图片失败:', error);
-                alert('保存图片失败，请重试');
-              });
+      // 渲染奖项格子
+      function renderPrizes () {
+        const container = document.getElementById('boxContainer');
+        container.innerHTML = '';
+        const prizeArray = generatePrizeArray();
+        prizeArray.forEach((prize) => {
+          const box = document.createElement('div');
+          box.className = 'box';
+          // 创建图片元素
+          const img = document.createElement('img');
+          img.src = prize.iconUrl;
+          img.alt = prize.name;
+          img.style.width = '8rem';
+          img.style.height = '8rem';
+          img.style.objectFit = 'cover';
+          img.style.borderRadius = '0.5rem';
+          // 创建文本元素
+          const text = document.createElement('span');
+          text.textContent = prize.pieceName;
+          text.style.color = prize.color;
+          text.style.fontSize = '3rem';
+          // 将图片和文本放入盒子
+          box.appendChild(img);
+          box.appendChild(text);
+          container.appendChild(box);
+          box.onclick = () => {
+            box.classList.add('active');
+          };
+        });
+      }
+
+      // 设置背景图片预览
+      function setupBackgroundPreview () {
+        const previewContainer = document.getElementById('bgPreview');
+        if (!previewContainer) return;
+        previewContainer.innerHTML = '';
+        bgImages.forEach((bg, index) => {
+          const preview = document.createElement('div');
+          preview.className = 'bg-preview-item';
+          preview.style.backgroundImage = `url(${bg.src})`;
+          preview.addEventListener('click', () => {
+            setBackground(index);
+            // 移除其他选中状态
+            document.querySelectorAll('.bg-preview-item').forEach((item) => {
+              item.classList.remove('selected');
+            });
+            preview.classList.add('selected');
           });
+          previewContainer.appendChild(preview);
+        });
+        // 默认选中第一个
+        if (previewContainer.firstChild) {
+          previewContainer.firstChild.classList.add('selected');
         }
+      }
 
-        // 初始化
-        function init() {
-          // 设置默认背景（第一张）
-          setBackground(0);
-          renderPreview();
-          renderPrizes();
-          setupBackgroundPreview();
-          setupSaveButton();
-        }
+      // 设置保存按钮事件
+      function setupSaveButton () {
+        const saveBtn = document.getElementById('saveBtn');
+        if (!saveBtn) return;
+        saveBtn.addEventListener('click', function () {
+          // 获取所有盒子元素
+          const boxes = document.querySelectorAll('.box');
+          // 遍历盒子元素并移除active类
+          boxes.forEach((box) => {
+            box.classList.add('active');
+          });
 
-        // 页面加载完成后执行
-        if (document.readyState === 'loading') {
-          document.addEventListener('DOMContentLoaded', init);
-        } else {
-          init();
-        }
-      })();
-    </script>
-  </body>
+          // 使用html2canvas捕获.app元素
+          html2canvas(document.querySelector('.app'), {
+            scale: devicePixelRatio * 2, // 提高分辨率
+            useCORS: true, // 允许跨域图片
+            backgroundColor: null, // 透明背景
+          })
+            .then((canvas) => {
+              // 将canvas转换为图片URL
+              const imgData = canvas.toDataURL('image/png');
+              // 创建下载链接
+              const link = document.createElement('a');
+              link.href = imgData;
+              link.download = '刮刮卡_' + new Date().getTime() + '.png';
+              document.body.appendChild(link);
+              link.click();
+              document.body.removeChild(link);
+            })
+            .catch((error) => {
+              console.error('保存图片失败:', error);
+              alert('保存图片失败，请重试');
+            });
+        });
+      }
+
+      // 初始化
+      function init () {
+        // 设置默认背景（第一张）
+        setBackground(0);
+        renderPreview();
+        renderPrizes();
+        setupBackgroundPreview();
+        setupSaveButton();
+      }
+
+      // 页面加载完成后执行
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', init);
+      } else {
+        init();
+      }
+    })();
+  </script>
+</body>
+
 </html>
